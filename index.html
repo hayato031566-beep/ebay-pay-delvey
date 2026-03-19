@@ -13,7 +13,7 @@
       --main-h:  #a4472b;
       --main-l:  #f8ece6;
       --accent:  #c0593a;
-      --bg:       #f9f7f2;
+      --bg:      #f9f7f2;
       --bg2:      #f2ede5;
       --surface: #ffffff;
       --border:  #e8e3db;
@@ -65,7 +65,7 @@
     .hd-text { flex: 1; }
     .hd-name { font-size: 15px; font-weight: 600; color: #fff; letter-spacing: -0.025em; line-height: 1.15; }
     .hd-name span { color: var(--main); }
-    .hd-sub   { font-size: 9.5px; color: rgba(255,255,255,0.35); letter-spacing: 0.06em; margin-top: 1px; }
+    .hd-sub  { font-size: 9.5px; color: rgba(255,255,255,0.35); letter-spacing: 0.06em; margin-top: 1px; }
     .hd-rate {
       font-size: 11px; color: rgba(255,255,255,0.55);
       background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
@@ -93,13 +93,14 @@
     }
     .tab.active { color: #fff; border-bottom-color: var(--main); font-weight: 500; }
 
-    /* ── Result box 固定 (Fixedに変更) ── */
+    /* ── Result box 固定型に変更（position: relative） ── */
     .result-box {
       background: var(--ink); color: #fff;
       border-radius: var(--r-lg); padding: 14px 20px;
       text-align: center;
-      position: fixed; top: 110px; left: 14px; right: 14px; z-index: 190; /* position を固定 */
-      max-width: 872px; margin: 0 auto;
+      position: relative; /* 固定から変更 */
+      z-index: 10;
+      max-width: 872px; margin: 0 auto 14px; /* 下に余白を追加 */
       box-shadow: 0 8px 30px rgba(0,0,0,0.2);
       overflow: hidden;
     }
@@ -110,17 +111,17 @@
       pointer-events: none;
     }
 
-    /* ── Layout 固定パーツの高さ分を確保 ── */
+    /* ── Layout 余白を調整 ── */
     .container { 
       width: 100%; 
       max-width: 900px; 
       margin: 0 auto; 
-      padding: 295px 14px 60px; /* 余白を調整して重なりを回避 */
+      padding: 115px 14px 60px; /* 余白を縮小 */
     }
     .page { display: none; }
     .page.active { display: block; }
 
-    /* レポートページの場合は固定結果ボックスがないため余白を調整 */
+    /* 集計レポート用の余白（一貫性を維持） */
     #reportPage.active ~ .container, 
     #reportPage.active { padding-top: 115px; }
 
@@ -219,9 +220,9 @@
       min-height: 44px; display: flex; flex-direction: column;
       align-items: center; justify-content: center; gap: 2px;
     }
-    .q-btn:hover   { background: var(--main-l); border-color: rgba(192,89,58,0.35); color: var(--main-h); }
+    .q-btn:hover  { background: var(--main-l); border-color: rgba(192,89,58,0.35); color: var(--main-h); }
     .q-btn:active { transform: scale(0.97); }
-    .q-btn small   { font-size: 9px; font-weight: 400; opacity: 0.6; }
+    .q-btn small  { font-size: 9px; font-weight: 400; opacity: 0.6; }
 
     /* ── Back-calc ── */
     .btn-toggle {
@@ -583,14 +584,8 @@
     document.getElementById(pId).classList.add('active');
     document.getElementById(pId === 'calcPage' ? 'tab-calc' : 'tab-report').classList.add('active');
     
-    const resultBox = document.querySelector('.result-box');
-    if(pId === 'reportPage') {
-      resultBox.style.display = 'none';
-      document.querySelector('.container').style.paddingTop = '115px';
-    } else {
-      resultBox.style.display = 'block';
-      document.querySelector('.container').style.paddingTop = '295px';
-    }
+    // switchTab時の余白調整（一貫性のため）
+    document.querySelector('.container').style.paddingTop = '115px';
     
     window.scrollTo(0,0);
   }
@@ -729,43 +724,42 @@
 
   function deleteItem(id) {
     let data = JSON.parse(localStorage.getItem('ebay_pro_data') || '[]');
-    data = data.filter(item => item.id !== id);
+    data = data.filter(i => i.id !== id);
     localStorage.setItem('ebay_pro_data', JSON.stringify(data));
     updateReport();
   }
 
-  function clearAllData() {
-    if(confirm('全てのデータを削除しますか？')) {
-      localStorage.removeItem('ebay_pro_data');
-      updateReport();
-      showToast('全データを削除しました');
-    }
-  }
-
   function setGoal() {
     const current = localStorage.getItem('cfg_goal') || 100000;
-    const g = prompt('今月の利益目標（円）を入力してください', current);
-    if(g) {
-      localStorage.setItem('cfg_goal', g);
+    const val = prompt('今月の目標純利益(円)を入力', current);
+    if(val !== null) {
+      localStorage.setItem('cfg_goal', val);
       updateReport();
     }
-  }
-
-  function resetInputs() {
-    inputs.itemName.value = '';
-    inputs.saleUsd.value = '';
-    inputs.cost.value = '';
-    inputs.shipping.value = '';
-    inputs.other.value = 0;
-    calc();
-    showToast('入力をクリアしました');
   }
 
   function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg;
     t.style.display = 'block';
-    setTimeout(() => t.style.display = 'none', 2500);
+    setTimeout(() => t.style.display = 'none', 2000);
+  }
+
+  function resetInputs() {
+    inputs.saleUsd.value = '';
+    inputs.cost.value = '';
+    inputs.shipping.value = '';
+    inputs.itemName.value = '';
+    calc();
+    showToast('入力をクリアしました');
+  }
+
+  function clearAllData() {
+    if(confirm('すべての記録を削除しますか？')) {
+      localStorage.removeItem('ebay_pro_data');
+      updateReport();
+      showToast('データを全削除しました');
+    }
   }
 </script>
 
