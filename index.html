@@ -72,6 +72,8 @@
       display: flex; align-items: center; gap: 5px; flex-shrink: 0;
     }
     .hd-dot { width: 5px; height: 5px; border-radius: 50%; background: #2ecc71; }
+    .hd-dot.loading { background: #f5a623; animation: blink 1s infinite alternate; }
+    @keyframes blink { from { opacity: 1; } to { opacity: 0.3; } }
 
     /* ── Tabs ── */
     .tabs {
@@ -158,7 +160,7 @@
     input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
     input[type=number] { -moz-appearance: textfield; }
 
-    /* ── Quick buttons (tile style) ── */
+    /* ── Quick buttons ── */
     .quick-group { display: flex; gap: 7px; margin-top: 8px; }
     .q-btn {
       flex: 1; background: var(--bg2); border: 1px solid var(--border);
@@ -219,17 +221,14 @@
       font-size: 10.5px; font-weight: 300; color: rgba(255,255,255,0.38);
       margin-bottom: 6px;
     }
-    .res-row span { display: flex; align-items: center; gap: 4px; }
-
     #profit {
       font-size: 56px; font-weight: 300; letter-spacing: -0.05em;
       line-height: 1; margin: 4px 0 6px;
       transition: color 0.3s;
     }
-
     .profit-rate-row { font-size: 11.5px; color: rgba(255,255,255,0.35); letter-spacing: 0.03em; }
 
-    /* 🔥 追加：ワンタップコピーボタンの神UI（結果のすぐ横・下） */
+    /* ワンタップコピーボタン */
     .copy-god-row {
       display: flex; gap: 8px; margin-top: 18px;
       position: relative; z-index: 10;
@@ -241,7 +240,7 @@
       cursor: pointer; transition: 0.2s; display: flex; flex-direction: column;
       align-items: center; justify-content: center; gap: 4px; font-family: 'Inter', sans-serif;
     }
-    .copy-god-row button span { font-size: 14px; } /* アイコン用 */
+    .copy-god-row button span { font-size: 14px; }
     .copy-god-row button:active { transform: scale(0.95); }
     .copy-god-row button.copied { 
       background: rgba(46,204,113,0.2); 
@@ -269,7 +268,6 @@
     .btn-reset:hover { opacity: 1; color: var(--ink2); }
 
     /* ── Report & Toast ── */
-    /* (中略せず元のCSSを維持) */
     .report-hero { background: var(--ink); color: #fff; border-radius: var(--r-lg); padding: 20px; margin-bottom: 10px; overflow: hidden; position: relative; }
     .report-hero::after { content: ''; position: absolute; top: -60px; right: -60px; width: 180px; height: 180px; border-radius: 50%; background: radial-gradient(circle, rgba(192,89,58,0.15) 0%, transparent 70%); pointer-events: none; }
     .report-hero h2 { color: rgba(255,255,255,0.35) !important; padding: 0 0 3px; justify-content: space-between; width: 100%; }
@@ -293,6 +291,17 @@
     .hist-del { color: var(--red); background: none; border: none; font-size: 18px; padding: 4px 7px; cursor: pointer; border-radius: var(--r-xs); transition: background 0.15s; }
     .hist-del:hover { background: var(--red-l); }
     #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--ink); color: rgba(255,255,255,0.9); padding: 10px 20px; border-radius: 20px; font-size: 12px; font-family: 'Inter', sans-serif; display: none; z-index: 1000; white-space: nowrap; box-shadow: 0 6px 24px rgba(0,0,0,0.25); }
+
+    /* 👑 追加：ランキング用スタイル */
+    .rank-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed var(--border); }
+    .rank-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .rank-badge { width: 22px; height: 22px; border-radius: 50%; background: var(--bg2); color: var(--ink3); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; margin-right: 10px; flex-shrink: 0; }
+    .rank-1 { background: #fff5e5; color: #f5a623; border: 1px solid #fce8c7; }
+    .rank-2 { background: #f2f4f5; color: #7f8c8d; border: 1px solid #e0e4e5; }
+    .rank-3 { background: #fdf6f2; color: #d35400; border: 1px solid #fae5d3; }
+    .rank-info { flex: 1; font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-right: 10px; color: var(--ink); }
+    .rank-profit { font-size: 14px; font-weight: 600; color: var(--green); flex-shrink: 0; }
+
     @media (max-width: 360px) { #profit { font-size: 44px; } #monthTotal{ font-size: 36px; } }
   </style>
 </head>
@@ -308,7 +317,7 @@
     <div class="hd-name">eBay利益で、<span>デルベイ！</span></div>
     <div class="hd-sub">eBay輸出 利益計算ツール</div>
   </div>
-  <div class="hd-rate"><div class="hd-dot"></div><span id="rateDisplay">¥150/$</span></div>
+  <div class="hd-rate" id="rateBadge"><div class="hd-dot" id="rateDot"></div><span id="rateDisplay">読込中...</span></div>
 </div>
 
 <div class="tabs">
@@ -435,6 +444,13 @@
       </div>
     </div>
 
+    <div class="card" style="padding:14px 16px;">
+      <h2 style="padding: 0 0 10px 0; display:flex; justify-content:space-between; border-bottom: 1px solid var(--border); margin-bottom: 10px;">
+        👑 利益ランキング (TOP 5)
+      </h2>
+      <div id="rankingList"></div>
+    </div>
+
     <div id="historyList"></div>
 
     <button class="btn-reset" style="color:var(--red); width:100%; opacity:0.5;" onclick="clearAllData()">データを全削除</button>
@@ -443,19 +459,40 @@
 </div>
 
 <script>
-  // ※途切れていたJSロジックを修復してあります
   const ids = ['itemName', 'rate', 'feePercent', 'saleUsd', 'cost', 'shipping', 'other'];
   const inputs = {};
   ids.forEach(id => inputs[id] = document.getElementById(id));
+
+  // ⑤ 追加：為替レート自動取得
+  async function fetchExchangeRate() {
+    const dot = document.getElementById('rateDot');
+    const display = document.getElementById('rateDisplay');
+    dot.classList.add('loading');
+    try {
+      const res = await fetch('https://open.er-api.com/v6/latest/USD');
+      const data = await res.json();
+      if(data && data.rates && data.rates.JPY) {
+        const currentRate = Math.floor(data.rates.JPY);
+        inputs.rate.value = currentRate;
+        display.textContent = `¥${currentRate}/$`;
+        calc();
+        showToast(`最新の為替レート(¥${currentRate})を反映しました`);
+      }
+    } catch(e) {
+      display.textContent = `¥${inputs.rate.value}/$ (手動)`;
+    } finally {
+      dot.classList.remove('loading');
+    }
+  }
 
   window.onload = () => {
     inputs.rate.value = localStorage.getItem('cfg_rate') || 150;
     inputs.feePercent.value = localStorage.getItem('cfg_fee') || 15;
     calc();
     updateReport();
+    fetchExchangeRate(); // 起動時に自動取得
   };
 
-  // 🔥 神UI用 コピーロジック
   function godCopy(type, btn) {
     const title = inputs.itemName.value || '';
     const price = inputs.saleUsd.value || '';
@@ -468,7 +505,7 @@
       textToCopy = title;
       if(!textToCopy) return showToast('タイトルが未入力です');
     } else if (type === 'price') {
-      textToCopy = price; // 出品画面にペーストしやすいよう数値のみ
+      textToCopy = price;
       if(!textToCopy) return showToast('売値が未入力です');
     } else if (type === 'desc') {
       if(!title) return showToast('タイトルが未入力です');
@@ -477,12 +514,10 @@
       textToCopy = `【${title || '無題'}】\n売値: $${price || 0}\n仕入: ¥${cost}\n利益: ${profit}`;
     }
 
-    // コピー実行
     navigator.clipboard.writeText(textToCopy).then(() => {
       const originalHTML = btn.innerHTML;
       btn.innerHTML = '<span>✔</span>コピー済';
       btn.classList.add('copied');
-      
       setTimeout(() => {
         btn.innerHTML = originalHTML;
         btn.classList.remove('copied');
@@ -490,7 +525,6 @@
     });
   }
 
-  // 既存ロジック（修復済）
   function switchTab(pId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -546,6 +580,7 @@
     data.unshift(rec);
     localStorage.setItem('ebay_pro_data', JSON.stringify(data));
     showToast('記録を保存しました！');
+    updateReport();
   }
 
   function updateReport(filter = 'all') {
@@ -555,10 +590,28 @@
     const list = document.getElementById('historyList');
     list.innerHTML = '';
 
+    // ⑦ 追加：利益ランキングの描画
+    const rankList = document.getElementById('rankingList');
+    rankList.innerHTML = '';
+    const sortedData = [...data].filter(i => i.profit > 0).sort((a,b) => b.profit - a.profit).slice(0, 5);
+    if(sortedData.length === 0) {
+      rankList.innerHTML = '<div style="text-align:center; font-size:11px; color:var(--ink3); padding:10px 0;">データがありません</div>';
+    } else {
+      sortedData.forEach((item, index) => {
+        const rClass = index < 3 ? `rank-${index+1}` : '';
+        rankList.innerHTML += `
+          <div class="rank-item">
+            <div class="rank-badge ${rClass}">${index+1}</div>
+            <div class="rank-info">${item.name}</div>
+            <div class="rank-profit">¥${item.profit.toLocaleString()}</div>
+          </div>
+        `;
+      });
+    }
+
     data.forEach(item => {
       total += item.profit;
       if(item.profit >= 0) plus++; else minus++;
-      
       if(filter === 'plus' && item.profit < 0) return;
       if(filter === 'minus' && item.profit >= 0) return;
 
