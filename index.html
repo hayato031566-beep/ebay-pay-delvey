@@ -90,10 +90,34 @@
     }
     .tab.active { color: #fff; border-bottom-color: var(--main); font-weight: 500; }
 
-    /* ── Layout ── */
-    .container { width: 100%; max-width: 500px; margin: 0 auto; padding: 18px 14px 60px; }
+    /* ── Layout 修正版 ── */
+    .container { 
+      width: 100%; 
+      max-width: 900px; /* 広げました */
+      margin: 0 auto; 
+      padding: 18px 14px 60px; 
+    }
     .page { display: none; }
     .page.active { display: block; }
+
+    /* ── レポート用のグリッド設定 ── */
+    .report-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    @media (min-width: 800px) {
+      .report-grid {
+        display: grid;
+        grid-template-columns: 1fr 320px; /* 左にメイン、右にランキング */
+        align-items: start;
+      }
+      .report-side {
+        position: sticky;
+        top: 80px;
+      }
+    }
 
     /* ── Card ── */
     .card {
@@ -292,7 +316,16 @@
     .hist-del:hover { background: var(--red-l); }
     #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--ink); color: rgba(255,255,255,0.9); padding: 10px 20px; border-radius: 20px; font-size: 12px; font-family: 'Inter', sans-serif; display: none; z-index: 1000; white-space: nowrap; box-shadow: 0 6px 24px rgba(0,0,0,0.25); }
 
-    /* Ranking Style */
+    /* Ranking Style 新パーツ */
+    .rank-tabs {
+      display: flex; gap: 5px; margin-bottom: 10px;
+    }
+    .rank-tab-mini {
+      flex: 1; font-size: 10px; padding: 4px; background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; cursor: pointer; text-align: center;
+    }
+    .rank-tab-mini.active {
+      background: var(--main); color: #fff; border-color: var(--main);
+    }
     .rank-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed var(--border); }
     .rank-item:last-child { border-bottom: none; padding-bottom: 0; }
     .rank-badge { width: 22px; height: 22px; border-radius: 50%; background: var(--bg2); color: var(--ink3); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; margin-right: 10px; flex-shrink: 0; }
@@ -408,41 +441,53 @@
   </div>
 
   <div id="reportPage" class="page">
-    <div class="report-hero">
-      <h2 style="display:flex; justify-content:space-between; align-items:center; padding:0 0 4px;">
-        📈 今月の進捗
-        <button class="q-btn" style="padding:4px 10px;" onclick="setGoal()">目標設定</button>
-      </h2>
-      <div class="goal-meta">
-        <span id="goalText">目標: ¥100,000</span>
-        <span id="percentText">0%</span>
-      </div>
-      <div class="bar-bg"><div id="goalBar" class="bar-fill"></div></div>
-      <div id="monthTotal" onclick="updateReport('all')">¥0</div>
-      <div style="font-size:9px; text-align:center; color:rgba(255,255,255,0.25); margin-top:-8px;">タップで全件表示</div>
-    </div>
-
-    <div class="card" style="padding:14px 16px;">
-      <div class="sum-grid">
-        <div class="sum-item" id="filter-plus" onclick="updateReport('plus')">
-          <div style="color:var(--green);">黒字件数</div>
-          <b id="plusCount" style="color:var(--green);">0</b>
+    <div class="report-grid">
+      
+      <div class="report-main">
+        <div class="report-hero">
+          <h2 style="display:flex; justify-content:space-between; align-items:center; padding:0 0 4px;">
+            📈 今月の進捗
+            <button class="q-btn" style="padding:4px 10px;" onclick="setGoal()">目標設定</button>
+          </h2>
+          <div class="goal-meta">
+            <span id="goalText">目標: ¥100,000</span>
+            <span id="percentText">0%</span>
+          </div>
+          <div class="bar-bg"><div id="goalBar" class="bar-fill"></div></div>
+          <div id="monthTotal" onclick="updateReport('all')">¥0</div>
+          <div style="font-size:9px; text-align:center; color:rgba(255,255,255,0.25); margin-top:-8px;">タップで全件表示</div>
         </div>
-        <div class="sum-item" id="filter-minus" onclick="updateReport('minus')">
-          <div style="color:var(--red);">赤字件数</div>
-          <b id="minusCount" style="color:var(--red);">0</b>
+        
+        <div class="card" style="padding:14px 16px;">
+          <div class="sum-grid">
+            <div class="sum-item" id="filter-plus" onclick="updateReport('plus')">
+              <div style="color:var(--green);">黒字件数</div>
+              <b id="plusCount" style="color:var(--green);">0</b>
+            </div>
+            <div class="sum-item" id="filter-minus" onclick="updateReport('minus')">
+              <div style="color:var(--red);">赤字件数</div>
+              <b id="minusCount" style="color:var(--red);">0</b>
+            </div>
+          </div>
+        </div>
+        
+        <div id="historyList"></div>
+      </div>
+
+      <div class="report-side">
+        <div class="card" style="padding:14px 16px;">
+          <h2 style="padding: 0 0 10px 0; border-bottom: 1px solid var(--border); margin-bottom: 10px;">
+            👑 利益ランキング
+          </h2>
+          <div class="rank-tabs">
+            <div class="rank-tab-mini active" id="rt-profit" onclick="setRankMode('profit')">利益額</div>
+            <div class="rank-tab-mini" id="rt-rate" onclick="setRankMode('rate')">利益率</div>
+          </div>
+          <div id="rankingList"></div>
         </div>
       </div>
-    </div>
 
-    <div class="card" style="padding:14px 16px;">
-      <h2 style="padding: 0 0 10px 0; display:flex; justify-content:space-between; border-bottom: 1px solid var(--border); margin-bottom: 10px;">
-        👑 利益ランキング (TOP 5)
-      </h2>
-      <div id="rankingList"></div>
     </div>
-
-    <div id="historyList"></div>
     <button class="btn-reset" style="color:var(--red); width:100%; opacity:0.5;" onclick="clearAllData()">データを全削除</button>
   </div>
 
@@ -452,6 +497,15 @@
   const ids = ['itemName', 'rate', 'feePercent', 'saleUsd', 'cost', 'shipping', 'other'];
   const inputs = {};
   ids.forEach(id => inputs[id] = document.getElementById(id));
+
+  // --- 追加された新パーツ：ランキングモード ---
+  let currentRankMode = 'profit';
+  function setRankMode(mode) {
+    currentRankMode = mode;
+    document.querySelectorAll('.rank-tab-mini').forEach(t => t.classList.remove('active'));
+    document.getElementById('rt-' + mode).classList.add('active');
+    updateReport();
+  }
 
   async function fetchExchangeRate() {
     const dot = document.getElementById('rateDot');
@@ -566,7 +620,6 @@
     const isMinus = document.getElementById('profit').textContent.includes('-');
     const profitVal = parseInt(pStr) * (isMinus ? -1 : 1);
     
-    // 利益率も保存しておく（ランキング表示用）
     const saleJpy = parseFloat(inputs.saleUsd.value) * parseFloat(inputs.rate.value);
     const pRate = saleJpy > 0 ? (profitVal / saleJpy) * 100 : 0;
 
@@ -592,27 +645,39 @@
     const list = document.getElementById('historyList');
     list.innerHTML = '';
 
-    // 利益ランキングの描画（黒字のみ、金額順）
+    // 👑 利益ランキング描画：強化版 (利益額/利益率の切り替え対応)
     const rankList = document.getElementById('rankingList');
-    rankList.innerHTML = '';
-    const sortedData = [...data].filter(i => i.profit > 0).sort((a,b) => b.profit - a.profit).slice(0, 5);
-    
-    if(sortedData.length === 0) {
-      rankList.innerHTML = '<div style="text-align:center; font-size:11px; color:var(--ink3); padding:10px 0;">データがありません</div>';
-    } else {
-      sortedData.forEach((item, index) => {
-        const rClass = index < 3 ? `rank-${index+1}` : '';
-        rankList.innerHTML += `
-          <div class="rank-item">
-            <div class="rank-badge ${rClass}">${index+1}</div>
-            <div class="rank-info">${item.name}</div>
-            <div class="rank-profit">
-              <b>¥${item.profit.toLocaleString()}</b>
-              <small>利益率 ${item.rate || 0}%</small>
+    if (rankList) {
+      rankList.innerHTML = '';
+      const sortedData = [...data].filter(i => i.profit > 0).sort((a,b) => {
+        if (currentRankMode === 'profit') {
+          return b.profit - a.profit;
+        } else {
+          return (b.profit / (b.sale || 1)) - (a.profit / (a.sale || 1));
+        }
+      }).slice(0, 5);
+      
+      if(sortedData.length === 0) {
+        rankList.innerHTML = '<div style="text-align:center; font-size:11px; color:var(--ink3); padding:10px 0;">データがありません</div>';
+      } else {
+        sortedData.forEach((item, index) => {
+          const rClass = index < 3 ? `rank-${index+1}` : '';
+          const displayVal = currentRankMode === 'profit' 
+            ? `¥${item.profit.toLocaleString()}` 
+            : `${item.rate || 0}%`;
+
+          rankList.innerHTML += `
+            <div class="rank-item">
+              <div class="rank-badge ${rClass}">${index+1}</div>
+              <div class="rank-info">${item.name}</div>
+              <div class="rank-profit">
+                <b>${displayVal}</b>
+                <small>${currentRankMode === 'profit' ? '利益率 ' + (item.rate || 0) + '%' : '利益額 ¥' + item.profit.toLocaleString()}</small>
+              </div>
             </div>
-          </div>
-        `;
-      });
+          `;
+        });
+      }
     }
 
     // メインリストの更新
@@ -630,7 +695,7 @@
       list.appendChild(d);
     });
 
-    // 統計の表示更新
+    // 統計表示更新
     document.getElementById('monthTotal').textContent = (total >= 0 ? '¥' : '-¥') + Math.abs(total).toLocaleString();
     document.getElementById('monthTotal').style.color = total >= 0 ? '#fff' : 'var(--red)';
     document.getElementById('plusCount').textContent = plus;
@@ -640,7 +705,6 @@
     document.getElementById('goalBar').style.width = p + '%';
     document.getElementById('percentText').textContent = p.toFixed(1) + '%';
 
-    // フィルタ表示の状態管理
     document.getElementById('filter-plus').classList.toggle('active-filter', filter === 'plus');
     document.getElementById('filter-minus').classList.toggle('active-filter', filter === 'minus');
   }
