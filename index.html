@@ -14,21 +14,21 @@
       --main-l:  #f8ece6;
       --accent:  #c0593a;
       --bg:      #f9f7f2;
-      --bg2:      #f2ede5;
+      --bg2:     #f2ede5;
       --surface: #ffffff;
       --border:  #e8e3db;
-      --ink:      #18150f;
+      --ink:     #18150f;
       --ink2:    #574e43;
       --ink3:    #9a8e80;
-      --green:    #1a9e5c;
+      --green:   #1a9e5c;
       --green-l: #e4f7ee;
-      --red:      #d03a3a;
-      --red-l:    #fceaea;
+      --red:     #d03a3a;
+      --red-l:   #fceaea;
       --dollar-bg:  #edf7f2;
       --dollar-bd:  #b8dece;
       --dollar-txt: #1a7f50;
-      --yen-bg:      #fef6ea;
-      --yen-bd:      #f0d9b0;
+      --yen-bg:     #fef6ea;
+      --yen-bd:     #f0d9b0;
       --yen-txt:    #9a6010;
       --r:    14px;
       --r-sm: 10px;
@@ -470,6 +470,7 @@
   ids.forEach(id => inputs[id] = document.getElementById(id));
 
   let currentRankMode = 'profit';
+  let currentFilter = 'all'; // フィルター状態を記憶
 
   function showToast(msg) {
     const t = document.getElementById('toast');
@@ -613,22 +614,29 @@
     data.unshift(rec);
     localStorage.setItem('ebay_pro_data', JSON.stringify(data));
     showToast('Record Saved!');
-    updateReport();
+    updateReport(currentFilter); // 現在のフィルターを維持
   }
 
-  function updateReport(filter = 'all') {
+  function updateReport(filter = currentFilter) {
+    currentFilter = filter; // 状態を更新
     const data = JSON.parse(localStorage.getItem('ebay_pro_data') || '[]');
     const goal = parseInt(localStorage.getItem('cfg_goal') || 100000);
     let total = 0, plus = 0, minus = 0;
     const list = document.getElementById('historyList');
     list.innerHTML = '';
 
+    // ボタンのスタイル更新
+    document.getElementById('filter-plus').classList.remove('active-filter');
+    document.getElementById('filter-minus').classList.remove('active-filter');
+    if(currentFilter === 'plus') document.getElementById('filter-plus').classList.add('active-filter');
+    if(currentFilter === 'minus') document.getElementById('filter-minus').classList.add('active-filter');
+
     const rankList = document.getElementById('rankingList');
     if (rankList) {
       rankList.innerHTML = '';
       const sortedData = [...data].filter(i => i.profit > 0).sort((a,b) => {
         if (currentRankMode === 'profit') return b.profit - a.profit;
-        return (b.profit / (b.sale || 1)) - (a.profit / (a.sale || 1));
+        return (parseFloat(b.rate) || 0) - (parseFloat(a.rate) || 0);
       }).slice(0, 5);
       
       if(sortedData.length === 0) {
@@ -651,15 +659,18 @@
     data.forEach(item => {
       total += item.profit;
       if(item.profit >= 0) plus++; else minus++;
-      if(filter === 'plus' && item.profit < 0) return;
-      if(filter === 'minus' && item.profit >= 0) return;
-
-      const d = document.createElement('div');
-      d.className = 'hist-card';
-      d.innerHTML = `<div><b>${item.name}</b><br><small>$${item.sale}</small></div>
-                     <div style="display:flex;align-items:center;"><b style="color:${item.profit>=0?'var(--green)':'var(--red)'}">¥${item.profit.toLocaleString()}</b>
-                     <button class="hist-del" onclick="deleteItem(${item.id})">×</button></div>`;
-      list.appendChild(d);
+      
+      // フィルター条件
+      let show = (currentFilter === 'all') || (currentFilter === 'plus' && item.profit >= 0) || (currentFilter === 'minus' && item.profit < 0);
+      
+      if(show) {
+        const d = document.createElement('div');
+        d.className = 'hist-card';
+        d.innerHTML = `<div><b>${item.name}</b><br><small>$${item.sale}</small></div>
+                       <div style="display:flex;align-items:center;"><b style="color:${item.profit>=0?'var(--green)':'var(--red)'}">¥${item.profit.toLocaleString()}</b>
+                       <button class="hist-del" onclick="deleteItem(${item.id})">×</button></div>`;
+        list.appendChild(d);
+      }
     });
 
     document.getElementById('monthTotal').textContent = (total >= 0 ? '¥' : '-¥') + Math.abs(total).toLocaleString();
@@ -672,7 +683,6 @@
     document.getElementById('percentText').textContent = p.toFixed(1) + '%';
   }
 
-  // Added X Share Function
   function shareOnX() {
     const totalProfit = document.getElementById('monthTotal').textContent;
     const text = encodeURIComponent(`今月のeBay利益は ${totalProfit}！ #デルベイ`);
@@ -681,10 +691,11 @@
   }
 
   function deleteItem(id) {
+    if(!confirm('Delete this record?')) return;
     let data = JSON.parse(localStorage.getItem('ebay_pro_data') || '[]');
     data = data.filter(i => i.id !== id);
     localStorage.setItem('ebay_pro_data', JSON.stringify(data));
-    updateReport();
+    updateReport(currentFilter); // 削除後も現在のフィルターを維持
   }
 
   function resetInputs() {
