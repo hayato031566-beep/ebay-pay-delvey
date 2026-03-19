@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>eBay Profit Calculator - Delvey</title>
+  <title>Free eBay Profit Calculator | Calculate Fees & Profit - Delvey</title>
+  <meta name="description" content="Maximize your earnings with our Free eBay Profit Calculator. Easily calculate eBay fees, shipping costs, and profit margins to optimize your reselling business.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -66,15 +67,6 @@
     .hd-name { font-size: 15px; font-weight: 600; color: #fff; letter-spacing: -0.025em; line-height: 1.15; }
     .hd-name span { color: var(--main); }
     .hd-sub  { font-size: 9.5px; color: rgba(255,255,255,0.35); letter-spacing: 0.06em; margin-top: 1px; }
-    .hd-rate {
-      font-size: 11px; color: rgba(255,255,255,0.55);
-      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 20px; padding: 4px 10px;
-      display: flex; align-items: center; gap: 5px; flex-shrink: 0;
-    }
-    .hd-dot { width: 5px; height: 5px; border-radius: 50%; background: #2ecc71; }
-    .hd-dot.loading { background: #f5a623; animation: blink 1s infinite alternate; }
-    @keyframes blink { from { opacity: 1; } to { opacity: 0.3; } }
 
     /* ── Tabs ── */
     .tabs {
@@ -121,19 +113,21 @@
     .page { display: none; }
     .page.active { display: block; }
 
-    .report-grid {
+    /* Main App Layout */
+    .app-grid {
       display: flex;
       flex-direction: column;
       gap: 14px;
     }
 
     @media (min-width: 800px) {
-      .report-grid {
+      .app-grid {
         display: grid;
         grid-template-columns: 1fr 320px;
         align-items: start;
+        gap: 20px;
       }
-      .report-side {
+      .app-side {
         position: sticky;
         top: 115px;
       }
@@ -176,7 +170,6 @@
       flex-shrink: 0; letter-spacing: -0.02em;
     }
     .cb.d { background: var(--dollar-bg); border-color: var(--dollar-bd); color: var(--dollar-txt); }
-    .cb.y { background: var(--yen-bg);    border-color: var(--yen-bd);    color: var(--yen-txt); }
     .cb.p { background: var(--bg2);         border-color: var(--border);    color: var(--ink3); font-size: 13px; }
 
     input {
@@ -228,6 +221,9 @@
       border: 1px solid rgba(192,89,58,0.20);
       padding: 15px 18px; border-radius: var(--r-sm);
       margin: 0 18px 14px;
+    }
+    .back-calc-row {
+      display: flex; gap: 8px; margin-top: 5px;
     }
     #backCalcPanel button {
       background: var(--main); color: #fff; border: none;
@@ -308,7 +304,34 @@
       margin-top: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
     }
 
-    @media (max-width: 360px) { #profit { font-size: 38px; } #monthTotal{ font-size: 36px; } }
+    /* ── Mobile Overrides ── */
+    @media (max-width: 600px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .field.full {
+        grid-column: 1 / 2;
+      }
+      .copy-god-row {
+        flex-wrap: wrap;
+      }
+      .copy-god-row button {
+        flex: 1 1 calc(50% - 8px);
+        padding: 12px 4px;
+      }
+      .back-calc-row {
+        flex-direction: column;
+      }
+      .back-calc-row button {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 400px) { 
+      #profit { font-size: 40px; } 
+      #monthTotal { font-size: 34px; } 
+    }
   </style>
 </head>
 <body>
@@ -323,7 +346,6 @@
     <div class="hd-name">eBay Profit <span>Calculator</span></div>
     <div class="hd-sub">Smart Profit Tracker by Delvey</div>
   </div>
-  <div class="hd-rate" id="rateBadge"><div class="hd-dot" id="rateDot"></div><span id="rateDisplay">Loading...</span></div>
 </div>
 
 <div class="tabs">
@@ -331,147 +353,147 @@
   <div class="tab" id="tab-report" onclick="switchTab('reportPage')">Reports</div>
 </div>
 
-<div class="container">
+<div class="container app-grid">
 
-  <div id="calcPage" class="page active">
-    
-    <div class="card">
-      <h2>Item Info</h2>
-      <div class="form-grid" style="padding-top:10px;">
-        <div class="field full">
-          <input type="text" id="itemName" placeholder="Item name or SKU">
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>Sale Details</h2>
-      <div class="form-grid">
-        <div class="field">
-          <label>Exchange Rate</label>
-          <div class="iw"><div class="cb y">¥</div><input type="number" id="rate" value="150" placeholder="e.g. 150"></div>
-        </div>
-        <div class="field">
-          <label>eBay Fee (%)</label>
-          <div class="iw"><div class="cb p">%</div><input type="number" id="feePercent" value="15" placeholder="e.g. 15"></div>
-        </div>
-        <div class="field">
-          <label>Selling Price ($)</label>
-          <div class="iw"><div class="cb d">$</div><input type="number" id="saleUsd" placeholder="0.00"></div>
-        </div>
-        <div class="field">
-          <label>Purchase Price (¥)</label>
-          <div class="iw"><div class="cb y">¥</div><input type="number" id="cost" placeholder="Item cost"></div>
-        </div>
-        <div class="field">
-          <label>Shipping (¥)</label>
-          <div class="iw"><div class="cb y">¥</div><input type="number" id="shipping" placeholder="Shipping cost"></div>
-          <div class="quick-group">
-            <button class="q-btn" onclick="setShipping(3000)">✈ FedEx<small>~¥3k</small></button>
-            <button class="q-btn" onclick="setShipping(5000)">📦 EMS<small>~¥5k</small></button>
+  <div class="app-main">
+    <div id="calcPage" class="page active">
+      
+      <div class="card">
+        <h2>Item Info</h2>
+        <div class="form-grid" style="padding-top:10px;">
+          <div class="field full">
+            <input type="text" id="itemName" placeholder="Item name or SKU">
           </div>
         </div>
-        <div class="field">
-          <label>Other Expenses (¥)</label>
-          <div class="iw"><div class="cb y">¥</div><input type="number" id="other" value="0"></div>
+      </div>
+
+      <div class="card">
+        <h2>Sale Details</h2>
+        <div class="form-grid">
+          <div class="field">
+            <label>Selling Price ($)</label>
+            <div class="iw"><div class="cb d">$</div><input type="number" id="saleUsd" placeholder="0.00"></div>
+          </div>
+          <div class="field">
+            <label>eBay Fee (%)</label>
+            <div class="iw"><div class="cb p">%</div><input type="number" id="feePercent" value="15" placeholder="e.g. 15"></div>
+          </div>
+          <div class="field">
+            <label>Item Cost ($)</label>
+            <div class="iw"><div class="cb d">$</div><input type="number" id="cost" placeholder="0.00"></div>
+          </div>
+          <div class="field">
+            <label>Shipping ($)</label>
+            <div class="iw"><div class="cb d">$</div><input type="number" id="shipping" placeholder="0.00"></div>
+            <div class="quick-group">
+              <button class="q-btn" onclick="setShipping(5)">📦 Standard<small>~$5</small></button>
+              <button class="q-btn" onclick="setShipping(15)">✈️ Priority<small>~$15</small></button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Other Expenses ($)</label>
+            <div class="iw"><div class="cb d">$</div><input type="number" id="other" value="0"></div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="result-box">
-      <div class="res-row">
-        <span>Total Sales <span id="salesJpy">¥0</span></span>
-        <span>Total Fees <span id="feeJpy">¥0</span></span>
+      <div class="result-box">
+        <div class="res-row">
+          <span>Total Sales <span id="salesUsd">$0.00</span></span>
+          <span>Total Fees <span id="feeUsd">$0.00</span></span>
+        </div>
+        <span id="profitStatus">Ready</span>
+        <div id="profit">$0.00</div>
+        <div class="profit-rate-row">Profit Margin <span id="profitRate">0.0%</span></div>
+        <div class="copy-god-row">
+          <button onclick="godCopy('title', this)"><span>📝</span>Title</button>
+          <button onclick="godCopy('price', this)"><span>💲</span>Price($)</button>
+          <button onclick="godCopy('desc', this)"><span>✨</span>Description</button>
+          <button onclick="godCopy('memo', this)"><span>📊</span>Profit Summary</button>
+        </div>
       </div>
-      <span id="profitStatus">Ready</span>
-      <div id="profit">¥0</div>
-      <div class="profit-rate-row">Profit Margin <span id="profitRate">0.0%</span></div>
-      <div class="copy-god-row">
-        <button onclick="godCopy('title', this)"><span>📝</span>Title</button>
-        <button onclick="godCopy('price', this)"><span>💲</span>Price($)</button>
-        <button onclick="godCopy('desc', this)"><span>✨</span>Description</button>
-        <button onclick="godCopy('memo', this)"><span>📊</span>Profit Summary</button>
-      </div>
-    </div>
 
-    <button class="btn-toggle" onclick="toggleBackCalc()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a6 6 0 010 12h-1"/></svg>
-      Calculate Target Selling Price
-    </button>
-    <div id="backCalcPanel">
-      <label>Target Profit (¥)</label>
-      <div style="display:flex; gap:8px; margin-top:5px;">
-        <input type="number" id="targetProfit" value="3000">
-        <button onclick="calcBack()">Calculate Price</button>
-      </div>
-    </div>
-
-    <div style="margin-top: 20px; padding-bottom: 40px;">
-      <button class="btn-save" onclick="saveRecord()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
-        Save Record
+      <button class="btn-toggle" onclick="toggleBackCalc()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a6 6 0 010 12h-1"/></svg>
+        Calculate Target Selling Price
       </button>
-      <button class="btn-reset" onclick="resetInputs()">Clear Form</button>
+      <div id="backCalcPanel">
+        <label>Target Profit ($)</label>
+        <div class="back-calc-row">
+          <input type="number" id="targetProfit" value="30">
+          <button onclick="calcBack()">Calculate Price</button>
+        </div>
+      </div>
+
+      <div style="margin-top: 20px; padding-bottom: 40px;">
+        <button class="btn-save" onclick="saveRecord()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          Save Record
+        </button>
+        <button class="btn-reset" onclick="resetInputs()">Clear Form</button>
+      </div>
+    </div>
+
+    <div id="reportPage" class="page">
+      <div class="report-hero">
+        <h2 style="display:flex; justify-content:space-between; align-items:center;">
+          📈 Monthly Progress
+          <button class="q-btn" style="min-height:unset; padding:4px 10px;" onclick="setGoal()">Set Goal</button>
+        </h2>
+        <div class="goal-meta">
+          <span id="goalText">Goal: $1,000.00</span>
+          <span id="percentText">0%</span>
+        </div>
+        <div class="bar-bg"><div id="goalBar" class="bar-fill"></div></div>
+        <div id="monthTotal" onclick="updateReport('all')">$0.00</div>
+        <div style="font-size:9px; text-align:center; color:rgba(255,255,255,0.25); margin-top:-8px;">Tap amount to show all records</div>
+
+        <button class="btn-share-x" onclick="shareOnX()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          Share on X
+        </button>
+      </div>
+      
+      <div class="card" style="padding:14px 16px;">
+        <div class="sum-grid">
+          <div class="sum-item" id="filter-plus" onclick="updateReport('plus')">
+            <div style="color:var(--green);">Profitable</div>
+            <b id="plusCount" style="color:var(--green);">0</b>
+          </div>
+          <div class="sum-item" id="filter-minus" onclick="updateReport('minus')">
+            <div style="color:var(--red);">Loss</div>
+            <b id="minusCount" style="color:var(--red);">0</b>
+          </div>
+        </div>
+      </div>
+      
+      <div id="historyList"></div>
+      
+      <button class="btn-reset" style="color:var(--red); width:100%; opacity:0.5; margin-top: 10px;" onclick="clearAllData()">Clear All Data</button>
+    </div>
+
+    <div style="margin-top: 40px; padding: 20px 0; color: var(--ink3); font-size: 12px; line-height: 1.5; text-align: center; opacity: 0.8;">
+      This free eBay Profit Calculator helps sellers quickly estimate net profit after accounting for eBay fees, shipping costs, and item expenses. Optimize your profit margins and track your monthly progress with Delvey.
     </div>
   </div>
 
-  <div id="reportPage" class="page">
-    <div class="report-grid">
-      <div class="report-main">
-        <div class="report-hero">
-          <h2 style="display:flex; justify-content:space-between; align-items:center;">
-            📈 Monthly Progress
-            <button class="q-btn" style="min-height:unset; padding:4px 10px;" onclick="setGoal()">Set Goal</button>
-          </h2>
-          <div class="goal-meta">
-            <span id="goalText">Goal: ¥100,000</span>
-            <span id="percentText">0%</span>
-          </div>
-          <div class="bar-bg"><div id="goalBar" class="bar-fill"></div></div>
-          <div id="monthTotal" onclick="updateReport('all')">¥0</div>
-          <div style="font-size:9px; text-align:center; color:rgba(255,255,255,0.25); margin-top:-8px;">Tap amount to show all records</div>
-
-          <button class="btn-share-x" onclick="shareOnX()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-            Share on X
-          </button>
-        </div>
-        
-        <div class="card" style="padding:14px 16px;">
-          <div class="sum-grid">
-            <div class="sum-item" id="filter-plus" onclick="updateReport('plus')">
-              <div style="color:var(--green);">Profitable</div>
-              <b id="plusCount" style="color:var(--green);">0</b>
-            </div>
-            <div class="sum-item" id="filter-minus" onclick="updateReport('minus')">
-              <div style="color:var(--red);">Loss</div>
-              <b id="minusCount" style="color:var(--red);">0</b>
-            </div>
-          </div>
-        </div>
-        
-        <div id="historyList"></div>
+  <div class="app-side">
+    <div class="card" style="padding:14px 16px;">
+      <h2 style="padding: 0 0 10px 0; border-bottom: 1px solid var(--border); margin-bottom: 10px;">
+        👑 Top Items
+      </h2>
+      <div class="rank-tabs">
+        <div class="rank-tab-mini active" id="rt-profit" onclick="setRankMode('profit')">By Profit</div>
+        <div class="rank-tab-mini" id="rt-rate" onclick="setRankMode('rate')">By Margin</div>
       </div>
-
-      <div class="report-side">
-        <div class="card" style="padding:14px 16px;">
-          <h2 style="padding: 0 0 10px 0; border-bottom: 1px solid var(--border); margin-bottom: 10px;">
-            👑 Top Items
-          </h2>
-          <div class="rank-tabs">
-            <div class="rank-tab-mini active" id="rt-profit" onclick="setRankMode('profit')">By Profit</div>
-            <div class="rank-tab-mini" id="rt-rate" onclick="setRankMode('rate')">By Margin</div>
-          </div>
-          <div id="rankingList"></div>
-        </div>
-      </div>
+      <div id="rankingList"></div>
     </div>
-    <button class="btn-reset" style="color:var(--red); width:100%; opacity:0.5;" onclick="clearAllData()">Clear All Data</button>
   </div>
+
 </div>
 
 <script>
-  const ids = ['itemName', 'rate', 'feePercent', 'saleUsd', 'cost', 'shipping', 'other'];
+  const ids = ['itemName', 'feePercent', 'saleUsd', 'cost', 'shipping', 'other'];
   const inputs = {};
   ids.forEach(id => inputs[id] = document.getElementById(id));
 
@@ -479,11 +501,11 @@
   let currentFilter = 'all'; 
 
   // --- Utility Functions ---
-  const fmt = (val, cur = 'JPY') => {
+  const fmt = (val) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: cur,
-      maximumFractionDigits: cur === 'JPY' ? 0 : 2
+      currency: 'USD',
+      maximumFractionDigits: 2
     }).format(val);
   };
 
@@ -501,33 +523,10 @@
     updateReport(currentFilter);
   }
 
-  async function fetchExchangeRate() {
-    const dot = document.getElementById('rateDot');
-    const display = document.getElementById('rateDisplay');
-    dot.classList.add('loading');
-    try {
-      const res = await fetch('https://open.er-api.com/v6/latest/USD');
-      const data = await res.json();
-      if(data && data.rates && data.rates.JPY) {
-        const currentRate = Math.floor(data.rates.JPY);
-        inputs.rate.value = currentRate;
-        display.textContent = `¥${currentRate} / $1`;
-        calc();
-        showToast(`Rate auto-updated: ¥${currentRate}`);
-      }
-    } catch(e) {
-      display.textContent = `¥${inputs.rate.value} / $1 (Manual)`;
-    } finally {
-      dot.classList.remove('loading');
-    }
-  }
-
   window.onload = () => {
-    inputs.rate.value = localStorage.getItem('cfg_rate') || 150;
-    inputs.feePercent.value = localStorage.getItem('cfg_fee') || 15;
+    inputs.feePercent.value = localStorage.getItem('cfg_fee_usd') || 15;
     calc();
     updateReport('all');
-    fetchExchangeRate();
   };
 
   function godCopy(type, btn) {
@@ -547,7 +546,7 @@
       if(!title) return showToast('Item name required for description');
       textToCopy = `【${title}】\n\nCondition: Used - Excellent\nThank you for looking! If you have any questions, please feel free to ask.`;
     } else if (type === 'memo') {
-      textToCopy = `Item: ${title || 'Unnamed'}\nSale: ${fmt(price || 0, 'USD')}\nCost: ${fmt(cost)}\nNet Profit: ${profitText}`;
+      textToCopy = `Item: ${title || 'Unnamed'}\nSale: ${fmt(price || 0)}\nCost: ${fmt(cost)}\nNet Profit: ${profitText}`;
     }
 
     navigator.clipboard.writeText(textToCopy).then(() => {
@@ -571,12 +570,16 @@
 
   function calc() {
     const v = (id) => parseFloat(inputs[id].value) || 0;
-    const sJpy = Math.round(v('saleUsd') * v('rate'));
-    const fJpy = Math.round(sJpy * (v('feePercent') / 100));
-    const profit = sJpy - (v('cost') + v('shipping') + v('other') + fJpy);
     
-    document.getElementById('salesJpy').textContent = fmt(sJpy);
-    document.getElementById('feeJpy').textContent = fmt(fJpy);
+    // Save current fee percent for persistence
+    localStorage.setItem('cfg_fee_usd', inputs.feePercent.value);
+    
+    const sUsd = v('saleUsd');
+    const fUsd = sUsd * (v('feePercent') / 100);
+    const profit = sUsd - (v('cost') + v('shipping') + v('other') + fUsd);
+    
+    document.getElementById('salesUsd').textContent = fmt(sUsd);
+    document.getElementById('feeUsd').textContent = fmt(fUsd);
     
     const pEl = document.getElementById('profit');
     const statusEl = document.getElementById('profitStatus');
@@ -596,7 +599,7 @@
       statusEl.style.color = 'rgba(255,255,255,0.5)';
     }
     
-    const pRate = sJpy > 0 ? (profit / sJpy) * 100 : 0;
+    const pRate = sUsd > 0 ? (profit / sUsd) * 100 : 0;
     document.getElementById('profitRate').textContent = pRate.toFixed(1) + '%';
   }
   
@@ -609,28 +612,26 @@
   }
 
   function calcBack() {
-    const rate = parseFloat(inputs.rate.value) || 150;
     const feeP = parseFloat(inputs.feePercent.value) || 15;
     const costTotal = (parseFloat(inputs.cost.value)||0) + (parseFloat(inputs.shipping.value)||0) + (parseFloat(inputs.other.value)||0);
     const target = parseFloat(document.getElementById('targetProfit').value) || 0;
     
-    const requiredJpy = (target + costTotal) / (1 - (feeP / 100));
-    const requiredUsd = requiredJpy / rate;
+    const requiredUsd = (target + costTotal) / (1 - (feeP / 100));
     
     inputs.saleUsd.value = requiredUsd.toFixed(2);
     calc();
-    showToast(`Target price: ${fmt(requiredUsd, 'USD')}`);
+    showToast(`Target price: ${fmt(requiredUsd)}`);
   }
 
   function saveRecord() {
     if(!inputs.saleUsd.value) return showToast('Sale price required');
-    if(!inputs.cost.value) showToast('Warning: Purchase cost is 0');
+    if(!inputs.cost.value) showToast('Warning: Item cost is 0');
 
     const v = (id) => parseFloat(inputs[id].value) || 0;
-    const sJpy = Math.round(v('saleUsd') * v('rate'));
-    const fJpy = Math.round(sJpy * (v('feePercent') / 100));
-    const profitVal = sJpy - (v('cost') + v('shipping') + v('other') + fJpy);
-    const pRate = sJpy > 0 ? (profitVal / sJpy) * 100 : 0;
+    const sUsd = v('saleUsd');
+    const fUsd = sUsd * (v('feePercent') / 100);
+    const profitVal = sUsd - (v('cost') + v('shipping') + v('other') + fUsd);
+    const pRate = sUsd > 0 ? (profitVal / sUsd) * 100 : 0;
 
     const rec = { 
       id: Date.now(), 
@@ -640,17 +641,17 @@
       rate: pRate.toFixed(1)
     };
 
-    let data = JSON.parse(localStorage.getItem('ebay_pro_data') || '[]');
+    let data = JSON.parse(localStorage.getItem('ebay_pro_data_usd') || '[]');
     data.unshift(rec);
-    localStorage.setItem('ebay_pro_data', JSON.stringify(data));
+    localStorage.setItem('ebay_pro_data_usd', JSON.stringify(data));
     showToast('Record saved!');
     updateReport(currentFilter); 
   }
 
   function updateReport(filter = currentFilter) {
     currentFilter = filter; 
-    const data = JSON.parse(localStorage.getItem('ebay_pro_data') || '[]');
-    const goal = parseInt(localStorage.getItem('cfg_goal') || 100000);
+    const data = JSON.parse(localStorage.getItem('ebay_pro_data_usd') || '[]');
+    const goal = parseInt(localStorage.getItem('cfg_goal_usd') || 1000);
     let total = 0, plus = 0, minus = 0;
     const list = document.getElementById('historyList');
     list.innerHTML = '';
@@ -697,7 +698,7 @@
       if(shouldShow) {
         const d = document.createElement('div');
         d.className = 'hist-card';
-        d.innerHTML = `<div><b>${item.name}</b><br><small>${fmt(item.sale, 'USD')}</small></div>
+        d.innerHTML = `<div><b>${item.name}</b><br><small>${fmt(item.sale)}</small></div>
                        <div style="display:flex;align-items:center;"><b style="color:${item.profit>=0?'var(--green)':'var(--red)'}">${fmt(item.profit)}</b>
                        <button class="hist-del" onclick="deleteItem(${item.id})">×</button></div>`;
         list.appendChild(d);
@@ -724,9 +725,9 @@
 
   function deleteItem(id) {
     if(!confirm('Delete this record?')) return;
-    let data = JSON.parse(localStorage.getItem('ebay_pro_data') || '[]');
+    let data = JSON.parse(localStorage.getItem('ebay_pro_data_usd') || '[]');
     data = data.filter(i => i.id !== id);
-    localStorage.setItem('ebay_pro_data', JSON.stringify(data));
+    localStorage.setItem('ebay_pro_data_usd', JSON.stringify(data));
     updateReport(currentFilter); 
   }
 
@@ -741,17 +742,18 @@
   }
 
   function setGoal() {
-    const g = prompt("Set your monthly profit goal (¥):", "100000");
+    const g = prompt("Set your monthly profit goal ($):", "1000");
     if(g) {
-      localStorage.setItem('cfg_goal', g);
+      localStorage.setItem('cfg_goal_usd', g);
       updateReport(currentFilter);
     }
   }
 
   function clearAllData() {
     if(confirm("Are you sure you want to delete all saved records? This cannot be undone.")) {
-      localStorage.removeItem('ebay_pro_data');
-      localStorage.removeItem('cfg_goal');
+      localStorage.removeItem('ebay_pro_data_usd');
+      localStorage.removeItem('cfg_goal_usd');
+      localStorage.removeItem('cfg_fee_usd');
       updateReport('all');
       showToast('All data cleared');
     }
