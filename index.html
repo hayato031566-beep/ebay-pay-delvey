@@ -80,6 +80,7 @@
       display: flex; background: var(--ink);
       border-bottom: 1px solid rgba(255,255,255,0.07);
       padding: 0 18px;
+      position: sticky; top: 56px; z-index: 99; /* タブも固定 */
     }
     .tab {
       flex: 1; padding: 10px 0 9px; text-align: center;
@@ -93,7 +94,7 @@
     /* ── Layout 修正版 ── */
     .container { 
       width: 100%; 
-      max-width: 900px; /* 広げました */
+      max-width: 900px; 
       margin: 0 auto; 
       padding: 18px 14px 60px; 
     }
@@ -110,12 +111,12 @@
     @media (min-width: 800px) {
       .report-grid {
         display: grid;
-        grid-template-columns: 1fr 320px; /* 左にメイン、右にランキング */
+        grid-template-columns: 1fr 320px;
         align-items: start;
       }
       .report-side {
         position: sticky;
-        top: 80px;
+        top: 100px;
       }
     }
 
@@ -227,12 +228,14 @@
     }
     #backCalcPanel button:hover { background: var(--main-h); }
 
-    /* ── Result box ── */
+    /* ── Result box 固定版 ── */
     .result-box {
       background: var(--ink); color: #fff;
-      border-radius: var(--r-lg); padding: 20px 20px 18px;
+      border-radius: var(--r-lg); padding: 14px 20px; /* 上下少しスリム化 */
       text-align: center; margin-top: 4px;
-      position: relative; overflow: hidden;
+      position: sticky; top: 106px; z-index: 90; /* ヘッダー(56px)+タブ(45px)+αの位置で固定 */
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2); /* 浮いている感を強調 */
+      overflow: hidden;
     }
     .result-box::after {
       content: ''; position: absolute; top: -60px; right: -60px;
@@ -243,28 +246,28 @@
     .res-row {
       display: flex; justify-content: space-between;
       font-size: 10.5px; font-weight: 300; color: rgba(255,255,255,0.38);
-      margin-bottom: 6px;
+      margin-bottom: 2px;
     }
     #profit {
-      font-size: 56px; font-weight: 300; letter-spacing: -0.05em;
-      line-height: 1; margin: 4px 0 6px;
+      font-size: 48px; font-weight: 300; letter-spacing: -0.05em;
+      line-height: 1; margin: 2px 0 4px;
       transition: color 0.3s;
     }
-    .profit-rate-row { font-size: 11.5px; color: rgba(255,255,255,0.35); letter-spacing: 0.03em; }
+    .profit-rate-row { font-size: 11px; color: rgba(255,255,255,0.35); letter-spacing: 0.03em; }
 
     /* ワンタップコピーボタン */
     .copy-god-row {
-      display: flex; gap: 8px; margin-top: 18px;
+      display: flex; gap: 8px; margin-top: 12px;
       position: relative; z-index: 10;
     }
     .copy-god-row button {
       flex: 1; background: rgba(255,255,255,0.08);
       border: 1px solid rgba(255,255,255,0.15); color: #fff;
-      border-radius: 8px; padding: 10px 4px; font-size: 11px; font-weight: 500;
+      border-radius: 8px; padding: 8px 4px; font-size: 10px; font-weight: 500;
       cursor: pointer; transition: 0.2s; display: flex; flex-direction: column;
       align-items: center; justify-content: center; gap: 4px; font-family: 'Inter', sans-serif;
     }
-    .copy-god-row button span { font-size: 14px; }
+    .copy-god-row button span { font-size: 13px; }
     .copy-god-row button:active { transform: scale(0.95); }
     .copy-god-row button.copied { 
       background: rgba(46,204,113,0.2); 
@@ -276,7 +279,7 @@
     .btn-save {
       width: 100%; padding: 15px; background: var(--main); color: #fff; border: none;
       border-radius: var(--r-sm); font-weight: 600; font-size: 15px;
-      font-family: 'Inter', sans-serif; margin-top: 10px; cursor: pointer;
+      font-family: 'Inter', sans-serif; margin-top: 15px; cursor: pointer;
       display: flex; align-items: center; justify-content: center; gap: 7px;
       transition: background 0.15s; min-height: 52px; box-shadow: none;
     }
@@ -316,7 +319,7 @@
     .hist-del:hover { background: var(--red-l); }
     #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--ink); color: rgba(255,255,255,0.9); padding: 10px 20px; border-radius: 20px; font-size: 12px; font-family: 'Inter', sans-serif; display: none; z-index: 1000; white-space: nowrap; box-shadow: 0 6px 24px rgba(0,0,0,0.25); }
 
-    /* Ranking Style 新パーツ */
+    /* Ranking Style */
     .rank-tabs {
       display: flex; gap: 5px; margin-bottom: 10px;
     }
@@ -337,7 +340,7 @@
     .rank-profit b { font-size: 14px; font-weight: 600; color: var(--green); display: block; }
     .rank-profit small { font-size: 9px; color: var(--ink3); opacity: 0.7; }
 
-    @media (max-width: 360px) { #profit { font-size: 44px; } #monthTotal{ font-size: 36px; } }
+    @media (max-width: 360px) { #profit { font-size: 38px; } #monthTotal{ font-size: 36px; } }
   </style>
 </head>
 <body>
@@ -363,7 +366,22 @@
 <div class="container">
 
   <div id="calcPage" class="page active">
-    <div class="card">
+    <div class="result-box">
+      <div class="res-row">
+        <span>売上 <span id="salesJpy">¥0</span></span>
+        <span>手数料 <span id="feeJpy">¥0</span></span>
+      </div>
+      <div id="profit">¥0</div>
+      <div class="profit-rate-row">利益率 <span id="profitRate">0.0%</span></div>
+      <div class="copy-god-row">
+        <button onclick="godCopy('title', this)"><span>📝</span>タイトル</button>
+        <button onclick="godCopy('price', this)"><span>💲</span>価格($)</button>
+        <button onclick="godCopy('desc', this)"><span>✨</span>テンプレ</button>
+        <button onclick="godCopy('memo', this)"><span>📊</span>利益メモ</button>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
       <h2>商品メモ</h2>
       <div class="form-grid" style="padding-top:10px;">
         <div class="field full">
@@ -415,21 +433,6 @@
           <input type="number" id="targetProfit" value="3000" style="flex:1;">
           <button onclick="calcBack()">売値を計算</button>
         </div>
-      </div>
-    </div>
-
-    <div class="result-box">
-      <div class="res-row">
-        <span>売上 <span id="salesJpy">¥0</span></span>
-        <span>手数料 <span id="feeJpy">¥0</span></span>
-      </div>
-      <div id="profit">¥0</div>
-      <div class="profit-rate-row">利益率 <span id="profitRate">0.0%</span></div>
-      <div class="copy-god-row">
-        <button onclick="godCopy('title', this)"><span>📝</span>タイトル</button>
-        <button onclick="godCopy('price', this)"><span>💲</span>価格($)</button>
-        <button onclick="godCopy('desc', this)"><span>✨</span>テンプレ</button>
-        <button onclick="godCopy('memo', this)"><span>📊</span>利益メモ</button>
       </div>
     </div>
 
@@ -498,7 +501,6 @@
   const inputs = {};
   ids.forEach(id => inputs[id] = document.getElementById(id));
 
-  // --- 追加された新パーツ：ランキングモード ---
   let currentRankMode = 'profit';
   function setRankMode(mode) {
     currentRankMode = mode;
@@ -572,6 +574,7 @@
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.getElementById(pId).classList.add('active');
     document.getElementById(pId === 'calcPage' ? 'tab-calc' : 'tab-report').classList.add('active');
+    window.scrollTo(0,0);
   }
 
   function calc() {
@@ -645,7 +648,6 @@
     const list = document.getElementById('historyList');
     list.innerHTML = '';
 
-    // 👑 利益ランキング描画：強化版 (利益額/利益率の切り替え対応)
     const rankList = document.getElementById('rankingList');
     if (rankList) {
       rankList.innerHTML = '';
@@ -680,7 +682,6 @@
       }
     }
 
-    // メインリストの更新
     data.forEach(item => {
       total += item.profit;
       if(item.profit >= 0) plus++; else minus++;
@@ -695,7 +696,6 @@
       list.appendChild(d);
     });
 
-    // 統計表示更新
     document.getElementById('monthTotal').textContent = (total >= 0 ? '¥' : '-¥') + Math.abs(total).toLocaleString();
     document.getElementById('monthTotal').style.color = total >= 0 ? '#fff' : 'var(--red)';
     document.getElementById('plusCount').textContent = plus;
@@ -730,13 +730,17 @@
 
   function setGoal() {
     const g = prompt('目標月利を入力してください', '100000');
-    if(g) { localStorage.setItem('cfg_goal', g); updateReport(); }
+    if(g) {
+      localStorage.setItem('cfg_goal', g);
+      updateReport();
+    }
   }
 
   function clearAllData() {
-    if(confirm('全ての取引記録を削除しますか？')) {
+    if(confirm('全ての記録を削除してもよろしいですか？')) {
       localStorage.removeItem('ebay_pro_data');
       updateReport();
+      showToast('全データを削除しました');
     }
   }
 </script>
