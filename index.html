@@ -470,7 +470,16 @@
   ids.forEach(id => inputs[id] = document.getElementById(id));
 
   let currentRankMode = 'profit';
-  let currentFilter = 'all'; // フィルター状態を記憶
+  let currentFilter = 'all'; 
+
+  // --- ICL Function ---
+  const fmt = (val, cur = 'JPY') => {
+    return new Intl.NumberFormat(navigator.language, {
+      style: 'currency',
+      currency: cur,
+      maximumFractionDigits: cur === 'JPY' ? 0 : 2
+    }).format(val);
+  };
 
   function showToast(msg) {
     const t = document.getElementById('toast');
@@ -483,7 +492,7 @@
     currentRankMode = mode;
     document.querySelectorAll('.rank-tab-mini').forEach(t => t.classList.remove('active'));
     document.getElementById('rt-' + mode).classList.add('active');
-    updateReport();
+    updateReport(currentFilter);
   }
 
   async function fetchExchangeRate() {
@@ -496,12 +505,12 @@
       if(data && data.rates && data.rates.JPY) {
         const currentRate = Math.floor(data.rates.JPY);
         inputs.rate.value = currentRate;
-        display.textContent = `¥${currentRate}/$`;
+        display.textContent = `${fmt(currentRate)}/$`;
         calc();
-        showToast(`Rate updated: ¥${currentRate}`);
+        showToast(`Rate updated: ${fmt(currentRate)}`);
       }
     } catch(e) {
-      display.textContent = `¥${inputs.rate.value}/$ (Manual)`;
+      display.textContent = `${fmt(inputs.rate.value)}/$ (Manual)`;
     } finally {
       dot.classList.remove('loading');
     }
@@ -511,7 +520,7 @@
     inputs.rate.value = localStorage.getItem('cfg_rate') || 150;
     inputs.feePercent.value = localStorage.getItem('cfg_fee') || 15;
     calc();
-    updateReport();
+    updateReport('all');
     fetchExchangeRate();
   };
 
@@ -532,7 +541,7 @@
       if(!title) return showToast('Title is empty');
       textToCopy = `【${title}】\n\nCondition: Used - Excellent\nThank you for visiting! Please feel free to ask any questions.`;
     } else if (type === 'memo') {
-      textToCopy = `【${title || 'Untitled'}】\nPrice: $${price || 0}\nCost: ¥${cost}\nProfit: ${profit}`;
+      textToCopy = `【${title || 'Untitled'}】\nPrice: ${fmt(price || 0, 'USD')}\nCost: ${fmt(cost)}\nProfit: ${profit}`;
     }
 
     navigator.clipboard.writeText(textToCopy).then(() => {
@@ -560,11 +569,11 @@
     const fJpy = Math.round(sJpy * (v('feePercent') / 100));
     const profit = sJpy - (v('cost') + v('shipping') + v('other') + fJpy);
     
-    document.getElementById('salesJpy').textContent = `¥${sJpy.toLocaleString()}`;
-    document.getElementById('feeJpy').textContent = `¥${fJpy.toLocaleString()}`;
+    document.getElementById('salesJpy').textContent = fmt(sJpy);
+    document.getElementById('feeJpy').textContent = fmt(fJpy);
     
     const pEl = document.getElementById('profit');
-    pEl.textContent = (profit >= 0 ? '¥' : '-¥') + Math.abs(profit).toLocaleString();
+    pEl.textContent = fmt(profit);
     pEl.style.color = profit >= 0 ? '#2ecc71' : '#ff6b6b';
     
     const pRate = sJpy > 0 ? (profit / sJpy) * 100 : 0;
@@ -590,17 +599,17 @@
     
     inputs.saleUsd.value = requiredUsd.toFixed(2);
     calc();
-    showToast(`Price set to $${requiredUsd.toFixed(2)}`);
+    showToast(`Price set to ${fmt(requiredUsd, 'USD')}`);
   }
 
   function saveRecord() {
     if(!inputs.saleUsd.value) return showToast('Please enter sale price');
-    const pStr = document.getElementById('profit').textContent.replace(/[¥,]/g,'').replace('-','');
-    const isMinus = document.getElementById('profit').textContent.includes('-');
-    const profitVal = parseInt(pStr) * (isMinus ? -1 : 1);
+    const v = (id) => parseFloat(inputs[id].value) || 0;
+    const sJpy = Math.round(v('saleUsd') * v('rate'));
+    const fJpy = Math.round(sJpy * (v('feePercent') / 100));
+    const profitVal = sJpy - (v('cost') + v('shipping') + v('other') + fJpy);
     
-    const saleJpy = parseFloat(inputs.saleUsd.value) * parseFloat(inputs.rate.value);
-    const pRate = saleJpy > 0 ? (profitVal / saleJpy) * 100 : 0;
+    const pRate = sJpy > 0 ? (profitVal / sJpy) * 100 : 0;
 
     const rec = { 
       id: Date.now(), 
@@ -614,18 +623,17 @@
     data.unshift(rec);
     localStorage.setItem('ebay_pro_data', JSON.stringify(data));
     showToast('Record Saved!');
-    updateReport(currentFilter); // 現在のフィルターを維持
+    updateReport(currentFilter); 
   }
 
   function updateReport(filter = currentFilter) {
-    currentFilter = filter; // 状態を更新
+    currentFilter = filter; 
     const data = JSON.parse(localStorage.getItem('ebay_pro_data') || '[]');
     const goal = parseInt(localStorage.getItem('cfg_goal') || 100000);
     let total = 0, plus = 0, minus = 0;
     const list = document.getElementById('historyList');
     list.innerHTML = '';
 
-    // ボタンのスタイル更新
     document.getElementById('filter-plus').classList.remove('active-filter');
     document.getElementById('filter-minus').classList.remove('active-filter');
     if(currentFilter === 'plus') document.getElementById('filter-plus').classList.add('active-filter');
@@ -648,7 +656,7 @@
               <div class="rank-badge">${index+1}</div>
               <div class="rank-info">${item.name}</div>
               <div class="rank-profit">
-                <b>${currentRankMode === 'profit' ? '¥' + item.profit.toLocaleString() : item.rate + '%'}</b>
+                <b>${currentRankMode === 'profit' ? fmt(item.profit) : item.rate + '%'}</b>
               </div>
             </div>
           `;
@@ -660,24 +668,26 @@
       total += item.profit;
       if(item.profit >= 0) plus++; else minus++;
       
-      // フィルター条件
-      let show = (currentFilter === 'all') || (currentFilter === 'plus' && item.profit >= 0) || (currentFilter === 'minus' && item.profit < 0);
-      
-      if(show) {
+      let shouldShow = false;
+      if(currentFilter === 'all') shouldShow = true;
+      else if(currentFilter === 'plus' && item.profit >= 0) shouldShow = true;
+      else if(currentFilter === 'minus' && item.profit < 0) shouldShow = true;
+
+      if(shouldShow) {
         const d = document.createElement('div');
         d.className = 'hist-card';
-        d.innerHTML = `<div><b>${item.name}</b><br><small>$${item.sale}</small></div>
-                       <div style="display:flex;align-items:center;"><b style="color:${item.profit>=0?'var(--green)':'var(--red)'}">¥${item.profit.toLocaleString()}</b>
+        d.innerHTML = `<div><b>${item.name}</b><br><small>${fmt(item.sale, 'USD')}</small></div>
+                       <div style="display:flex;align-items:center;"><b style="color:${item.profit>=0?'var(--green)':'var(--red)'}">${fmt(item.profit)}</b>
                        <button class="hist-del" onclick="deleteItem(${item.id})">×</button></div>`;
         list.appendChild(d);
       }
     });
 
-    document.getElementById('monthTotal').textContent = (total >= 0 ? '¥' : '-¥') + Math.abs(total).toLocaleString();
+    document.getElementById('monthTotal').textContent = fmt(total);
     document.getElementById('monthTotal').style.color = total >= 0 ? '#fff' : 'var(--red)';
     document.getElementById('plusCount').textContent = plus;
     document.getElementById('minusCount').textContent = minus;
-    document.getElementById('goalText').textContent = `Goal: ¥${goal.toLocaleString()}`;
+    document.getElementById('goalText').textContent = `Goal: ${fmt(goal)}`;
     const p = Math.min(100, Math.max(0, (total/goal)*100));
     document.getElementById('goalBar').style.width = p + '%';
     document.getElementById('percentText').textContent = p.toFixed(1) + '%';
@@ -695,7 +705,7 @@
     let data = JSON.parse(localStorage.getItem('ebay_pro_data') || '[]');
     data = data.filter(i => i.id !== id);
     localStorage.setItem('ebay_pro_data', JSON.stringify(data));
-    updateReport(currentFilter); // 削除後も現在のフィルターを維持
+    updateReport(currentFilter); 
   }
 
   function resetInputs() {
@@ -711,14 +721,14 @@
     const g = prompt("Set monthly profit goal (JPY):", "100000");
     if(g) {
       localStorage.setItem('cfg_goal', g);
-      updateReport();
+      updateReport(currentFilter);
     }
   }
 
   function clearAllData() {
     if(confirm("Are you sure you want to delete all saved records?")) {
       localStorage.removeItem('ebay_pro_data');
-      updateReport();
+      updateReport('all');
     }
   }
 </script>
