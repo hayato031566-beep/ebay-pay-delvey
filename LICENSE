@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>eBay Profit Calculator | Delvey!</title>
+  <title>eBay Profit Pro | Delvey!</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -59,7 +59,6 @@
       border-radius: 9px; display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
     }
-    .hd-logo svg { display: block; }
     .hd-text { flex: 1; }
     .hd-name { font-size: 15px; font-weight: 600; color: #fff; letter-spacing: -0.025em; line-height: 1.15; }
     .hd-name span { color: var(--main); }
@@ -70,7 +69,8 @@
       border-radius: 20px; padding: 4px 10px;
       display: flex; align-items: center; gap: 5px; flex-shrink: 0;
     }
-    .hd-dot { width: 5px; height: 5px; border-radius: 50%; background: #2ecc71; }
+    .hd-dot { width: 5px; height: 5px; border-radius: 50%; background: #2ecc71; transition: background 0.3s; }
+    .hd-dot.syncing { background: #f1c40f; }
 
     /* ── Tabs ── */
     .tabs {
@@ -83,16 +83,13 @@
       color: rgba(255,255,255,0.35); cursor: pointer;
       font-size: 12.5px; font-weight: 500;
       border-bottom: 2px solid transparent; margin-bottom: -1px;
-      transition: color 0.15s, border-color 0.15s;
     }
     .tab.active { color: #fff; border-bottom-color: var(--main); font-weight: 600; }
 
-    /* ── Layout ── */
     .container { width: 100%; max-width: 500px; margin: 0 auto; padding: 18px 14px 60px; }
     .page { display: none; }
     .page.active { display: block; }
 
-    /* ── Card ── */
     .card {
       background: var(--surface); border-radius: var(--r-lg);
       border: 1px solid var(--border); margin-bottom: 10px; overflow: hidden;
@@ -102,16 +99,14 @@
       text-transform: uppercase; color: var(--ink3);
       margin: 0; padding: 13px 18px 0;
       display: flex; align-items: center; gap: 7px;
-      border-left: none !important;
     }
     h2::before { content: ''; width: 3px; height: 12px; background: var(--main); border-radius: 2px; flex-shrink: 0; }
 
-    /* ── Form grid ── */
     .form-grid {
       display: grid; grid-template-columns: 1fr 1fr;
       gap: 13px; padding: 12px 18px 18px;
     }
-    .field { display: flex; flex-direction: column; margin-bottom: 0; }
+    .field { display: flex; flex-direction: column; }
     .field.full { grid-column: 1 / 3; }
 
     label {
@@ -119,220 +114,82 @@
       text-transform: uppercase; color: var(--ink3); margin-bottom: 6px;
     }
 
-    /* ── Input with currency badge ── */
-    .iw { display: flex; align-items: stretch; }
+    .iw { display: flex; align-items: stretch; position: relative; }
     .cb {
       display: flex; align-items: center; justify-content: center;
-      min-width: 38px; padding: 0 10px;
-      font-size: 14px; font-weight: 700;
-      border-radius: var(--r-sm) 0 0 var(--r-sm);
-      border: 1px solid; border-right: none;
-      flex-shrink: 0; letter-spacing: -0.02em;
+      min-width: 38px; padding: 0 10px; font-size: 14px; font-weight: 700;
+      border-radius: var(--r-sm) 0 0 var(--r-sm); border: 1px solid; border-right: none;
+      flex-shrink: 0;
     }
     .cb.d { background: var(--dollar-bg); border-color: var(--dollar-bd); color: var(--dollar-txt); }
-    .cb.lc { background: var(--local-bg);    border-color: var(--local-bd);    color: var(--local-txt); font-size: 12px;}
-    .cb.p { background: var(--bg2);       border-color: var(--border);    color: var(--ink3); font-size: 13px; }
+    .cb.lc { background: var(--local-bg); border-color: var(--local-bd); color: var(--local-txt); font-size: 12px;}
+    .cb.p { background: var(--bg2); border-color: var(--border); color: var(--ink3); font-size: 13px; }
 
     input {
-      padding: 11px 12px;
-      border: 1px solid #e5e5e5; border-radius: var(--r-sm);
-      font-size: 15px; font-family: 'Inter', sans-serif; font-weight: 400;
-      color: var(--ink); background: var(--bg); width: 100%;
-      transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
-      -webkit-appearance: none; min-height: 44px;
+      padding: 11px 12px; border: 1px solid #e5e5e5; border-radius: var(--r-sm);
+      font-size: 15px; font-family: 'Inter', sans-serif;
+      color: var(--ink); background: var(--bg); width: 100%; min-height: 44px;
     }
-    .iw input {
-      border-radius: 0 var(--r-sm) var(--r-sm) 0;
-      border-left: none; flex: 1;
+    .iw input { border-radius: 0 var(--r-sm) var(--r-sm) 0; border-left: none; flex: 1; }
+    
+    /* Copy Button Style */
+    .btn-copy-inline {
+      position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r-xs); padding: 4px 8px; font-size: 10px; cursor: pointer;
+      color: var(--ink2); font-weight: 600; display: flex; align-items: center; gap: 4px;
+      transition: all 0.2s;
     }
-    input::placeholder { color: var(--ink3); opacity: 0.5; font-size: 13px; }
-    input:focus {
-      border-color: var(--main); background: var(--surface);
-      box-shadow: 0 0 0 3px rgba(192,89,58,0.10);
-    }
-    .iw:focus-within .cb { border-color: var(--main); }
-    .iw:focus-within .cb.d { background: #dff2ea; }
-    .iw:focus-within .cb.lc { background: var(--main-l); }
-    input[type=number]::-webkit-inner-spin-button,
-    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
-    input[type=number] { -moz-appearance: textfield; }
+    .btn-copy-inline:active { transform: translateY(-50%) scale(0.9); }
+    .btn-copy-inline.copied { background: var(--green); color: #fff; border-color: var(--green); }
 
-    /* ── Quick buttons ── */
-    .quick-group { display: flex; gap: 7px; margin-top: 8px; }
     .q-btn {
       flex: 1; background: var(--bg2); border: 1px solid var(--border);
       padding: 10px 4px; border-radius: var(--r-sm);
       font-size: 11.5px; font-weight: 600; color: var(--ink2);
-      cursor: pointer; font-family: 'Inter', sans-serif; line-height: 1.3;
-      transition: background 0.15s, color 0.15s, border-color 0.15s;
-      min-height: 44px; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 2px;
+      cursor: pointer; min-height: 44px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
     }
-    .q-btn:hover  { background: var(--main-l); border-color: rgba(192,89,58,0.35); color: var(--main-h); }
-    .q-btn:active { transform: scale(0.97); }
-    .q-btn small  { font-size: 9px; font-weight: 400; opacity: 0.6; }
+    .q-btn:hover { background: var(--main-l); border-color: rgba(192,89,58,0.35); color: var(--main-h); }
+    .q-btn small { font-size: 9px; font-weight: 400; opacity: 0.6; }
 
-    /* ── Back-calc ── */
     .btn-toggle {
       display: flex; align-items: center; justify-content: center; gap: 6px;
-      width: calc(100% - 36px); margin: 0 18px 14px;
-      padding: 11px; background: var(--bg2);
-      border: 1px dashed var(--border); border-radius: var(--r-sm);
-      font-size: 12px; font-weight: 600; color: var(--ink2);
-      cursor: pointer; font-family: 'Inter', sans-serif;
-      transition: all 0.15s; min-height: 44px;
+      width: calc(100% - 36px); margin: 0 18px 14px; padding: 11px;
+      background: var(--bg2); border: 1px dashed var(--border); border-radius: var(--r-sm);
+      font-size: 12px; font-weight: 600; color: var(--ink2); cursor: pointer;
     }
-    .btn-toggle:hover { background: var(--main-l); border-color: var(--main); color: var(--main-h); }
-    #backCalcPanel {
-      display: none; background: var(--main-l);
-      border: 1px solid rgba(192,89,58,0.20);
-      padding: 15px 18px; border-top: none;
-    }
-    #backCalcPanel label { color: var(--main-h); }
-    #backCalcPanel > div { display: flex; gap: 8px; margin-top: 7px; }
-    #backCalcPanel input { flex: 1; min-height: 44px; }
-    #backCalcPanel button {
-      background: var(--main); color: #fff; border: none;
-      border-radius: var(--r-sm); padding: 0 18px;
-      font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif;
-      cursor: pointer; white-space: nowrap; min-height: 44px;
-      transition: background 0.15s;
-    }
-    #backCalcPanel button:hover { background: var(--main-h); }
 
-    /* ── Result box ── */
+    #backCalcPanel { display: none; background: var(--main-l); padding: 15px 18px; border-top: none; }
+
     .result-box {
-      background: var(--ink); color: #fff;
-      border-radius: var(--r-lg); padding: 20px 20px 18px;
-      text-align: center; margin-top: 4px;
-      position: relative; overflow: hidden;
+      background: var(--ink); color: #fff; border-radius: var(--r-lg);
+      padding: 20px 20px 18px; text-align: center; margin-top: 4px; position: relative; overflow: hidden;
     }
-    .result-box::after {
-      content: ''; position: absolute; top: -60px; right: -60px;
-      width: 180px; height: 180px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(192,89,58,0.18) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .res-row {
-      display: flex; justify-content: space-between;
-      font-size: 11px; font-weight: 400; color: rgba(255,255,255,0.45);
-      margin-bottom: 6px;
-    }
-    .res-row span { display: flex; align-items: center; gap: 4px; }
+    .res-row { display: flex; justify-content: space-between; font-size: 11px; color: rgba(255,255,255,0.45); margin-bottom: 6px; }
+    #profit { font-size: 50px; font-weight: 300; letter-spacing: -0.05em; line-height: 1; margin: 4px 0 6px; }
 
-    #profit {
-      font-size: 50px; font-weight: 300; letter-spacing: -0.05em;
-      line-height: 1; margin: 4px 0 6px;
-      transition: color 0.3s;
-    }
-
-    .profit-rate-row { font-size: 11.5px; color: rgba(255,255,255,0.35); letter-spacing: 0.03em; }
-
-    /* ── Save / Reset ── */
     .btn-save {
       width: 100%; padding: 15px; background: var(--main); color: #fff; border: none;
-      border-radius: var(--r-sm); font-weight: 600; font-size: 15px;
-      font-family: 'Inter', sans-serif; margin-top: 10px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 7px;
-      transition: background 0.15s; min-height: 52px;
-    }
-    .btn-save:hover  { background: var(--main-h); }
-    .btn-save:active { background: #8c3c22; transform: scale(0.99); }
-    .btn-reset {
-      width: 100%; background: none; border: none; color: var(--ink3);
-      text-decoration: none; margin-top: 12px; font-size: 12px; font-weight: 500;
-      font-family: 'Inter', sans-serif; cursor: pointer;
-      display: block; text-align: center;
-      opacity: 0.65; transition: opacity 0.15s;
-    }
-    .btn-reset:hover { opacity: 1; color: var(--ink2); }
-
-    /* ── Report ── */
-    .report-hero {
-      background: var(--ink); color: #fff; border-radius: var(--r-lg);
-      padding: 20px; margin-bottom: 10px; overflow: hidden; position: relative;
-    }
-    .report-hero::after {
-      content: ''; position: absolute; top: -60px; right: -60px;
-      width: 180px; height: 180px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(192,89,58,0.15) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .report-hero h2 {
-      color: rgba(255,255,255,0.35) !important; padding: 0 0 3px;
-      justify-content: space-between; width: 100%;
-    }
-    .report-hero h2::before { background: var(--main); }
-
-    .report-hero h2 .q-btn {
-      font-size: 10px; padding: 4px 10px; border-radius: 20px;
-      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14);
-      color: rgba(255,255,255,0.65); min-height: unset; flex-direction: row;
-      font-weight: 600; gap: 0; text-transform: none;
-    }
-    .report-hero h2 .q-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
-
-    #monthTotal {
-      font-size: 40px; font-weight: 300; letter-spacing: -0.04em;
-      color: #fff; text-align: center; cursor: pointer;
-      margin: 4px 0 12px;
-    }
-    .goal-meta {
-      display: flex; justify-content: space-between;
-      font-size: 11px; font-weight: 400; color: rgba(255,255,255,0.45);
-      margin-bottom: 8px;
+      border-radius: var(--r-sm); font-weight: 600; font-size: 15px; margin-top: 10px; cursor: pointer;
     }
 
-    /* ── Progress bar ── */
-    .bar-bg {
-      background: rgba(255,255,255,0.10);
-      height: 10px; border-radius: 6px; overflow: hidden; margin: 0;
-    }
-    .bar-fill {
-      height: 100%; width: 0%; border-radius: 6px;
-      background: linear-gradient(90deg, #e8593c 0%, #f5a623 60%, #2ecc71 100%);
-      background-size: 200% 100%; background-position: right center;
-      transition: width 0.7s cubic-bezier(0.34,1.4,0.64,1), background-position 0.7s ease;
-    }
+    /* ── Report & Ranking ── */
+    .report-hero { background: var(--ink); color: #fff; border-radius: var(--r-lg); padding: 20px; margin-bottom: 10px; }
+    #monthTotal { font-size: 40px; font-weight: 300; text-align: center; margin: 4px 0 12px; }
+    .bar-bg { background: rgba(255,255,255,0.10); height: 10px; border-radius: 6px; overflow: hidden; }
+    .bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #e8593c, #2ecc71); transition: width 0.7s; }
 
-    /* ── Sum grid ── */
-    .sum-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0 0; }
-    .sum-item {
-      background: var(--surface); padding: 14px 12px; border-radius: var(--r);
-      text-align: center; cursor: pointer; border: 1.5px solid var(--border);
-      transition: border-color 0.15s;
-    }
-    .sum-item:hover { border-color: #ccc7be; }
-    .sum-item.active-filter { border-color: var(--main); background: var(--main-l); }
-    .sum-item div { font-size: 9px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; margin-bottom: 5px; }
-    .sum-item b { font-size: 28px; font-weight: 300; display: block; letter-spacing: -0.03em; }
+    .ranking-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 12px; margin-top: 10px; }
+    .rank-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--bg); }
+    .rank-num { width: 22px; height: 22px; background: var(--bg2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: var(--ink3); }
+    .rank-item:nth-child(1) .rank-num { background: #f1c40f; color: #fff; }
+    .rank-item:last-child { border-bottom: none; }
 
-    /* ── History ── */
-    .hist-card {
-      background: var(--surface); padding: 12px 14px;
-      border-radius: var(--r-sm); margin-bottom: 6px;
-      border: 1px solid var(--border); display: flex;
-      justify-content: space-between; align-items: center;
-      font-size: 12px; transition: border-color 0.15s;
-    }
-    .hist-card:hover { border-color: #ccc7be; }
-    .hist-card b { font-size: 13px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); }
-    .hist-card small { color: var(--ink3); font-size: 11px; font-weight: 500;}
-    .hist-del {
-      color: var(--red); background: none; border: none;
-      font-size: 18px; padding: 4px 7px; cursor: pointer;
-      border-radius: var(--r-xs); transition: background 0.15s;
-    }
-    .hist-del:hover { background: var(--red-l); }
+    .hist-card { background: var(--surface); padding: 12px 14px; border-radius: var(--r-sm); margin-bottom: 6px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .hist-del { color: var(--red); background: none; border: none; font-size: 18px; cursor: pointer; }
 
-    /* ── Toast ── */
-    #toast {
-      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-      background: var(--ink); color: rgba(255,255,255,0.9);
-      padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 500;
-      font-family: 'Inter', sans-serif; display: none; z-index: 1000;
-      white-space: nowrap; box-shadow: 0 6px 24px rgba(0,0,0,0.25);
-    }
+    #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 13px; display: none; z-index: 1000; box-shadow: 0 6px 24px rgba(0,0,0,0.25); }
   </style>
 </head>
 <body>
@@ -344,157 +201,155 @@
     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
   </div>
   <div class="hd-text">
-    <div class="hd-name">Profit Calc <span>Delvey!</span></div>
+    <div class="hd-name">Profit Pro <span>Delvey!</span></div>
     <div class="hd-sub">Global Edition</div>
   </div>
-  <div class="hd-rate"><div class="hd-dot"></div><span id="rateDisplay">LC 150/$1</span></div>
+  <div class="hd-rate"><div id="rateDot" class="hd-dot"></div><span id="rateDisplay">LC -- / $1</span></div>
 </div>
 
 <div class="tabs">
-  <div class="tab active" id="tab-calc"   onclick="switchTab('calcPage')">Calculator</div>
-  <div class="tab"        id="tab-report" onclick="switchTab('reportPage')">Monthly Report</div>
+  <div class="tab active" id="tab-calc" onclick="switchTab('calcPage')">Calculator</div>
+  <div class="tab" id="tab-report" onclick="switchTab('reportPage')">Monthly Report</div>
 </div>
 
 <div class="container">
-
   <div id="calcPage" class="page active">
-
     <div class="card">
       <h2>Item Details</h2>
       <div class="form-grid" style="padding-top:10px;">
         <div class="field full">
-          <input type="text" id="itemName" placeholder="e.g. Vintage Camera / Game Console">
+          <div class="iw">
+            <input type="text" id="itemName" placeholder="e.g. Vintage Camera" style="border-radius: var(--r-sm); border-left: 1px solid #e5e5e5;">
+            <button class="btn-copy-inline" onclick="copyValue('itemName', this)">📋</button>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <h2>Transaction Data</h2>
+      <h2>Transaction</h2>
       <div class="form-grid">
-
         <div class="field">
           <label>Exchange Rate</label>
           <div class="iw">
             <div class="cb lc">LC</div>
-            <input type="number" id="rate" value="150" placeholder="e.g. 150">
+            <input type="number" id="rate" value="150">
           </div>
         </div>
-
         <div class="field">
           <label>eBay Fee (%)</label>
           <div class="iw">
             <div class="cb p">%</div>
-            <input type="number" id="feePercent" value="15" placeholder="15">
+            <input type="number" id="feePercent" value="15">
           </div>
         </div>
-
         <div class="field">
           <label>Sale Price (USD)</label>
           <div class="iw">
             <div class="cb d">$</div>
-            <input type="number" id="saleUsd" placeholder="e.g. 120.00">
+            <input type="number" id="saleUsd" placeholder="0.00">
+            <button class="btn-copy-inline" onclick="copyValue('saleUsd', this, true)">📋</button>
           </div>
         </div>
-
         <div class="field">
           <label>Item Cost (LC)</label>
           <div class="iw">
             <div class="cb lc">LC</div>
-            <input type="number" id="cost" placeholder="e.g. 5000">
+            <input type="number" id="cost" placeholder="0">
           </div>
         </div>
-
         <div class="field">
           <label>Shipping (LC)</label>
           <div class="iw">
             <div class="cb lc">LC</div>
-            <input type="number" id="shipping" placeholder="e.g. 3000">
+            <input type="number" id="shipping" placeholder="0">
           </div>
-          <div class="quick-group">
-            <button class="q-btn" onclick="setShipping(3000)">
-              ✈ Standard<small>LC 3000</small>
-            </button>
-            <button class="q-btn" onclick="setShipping(5000)">
-              📦 Express<small>LC 5000</small>
-            </button>
+          <div style="display:flex; gap:5px; margin-top:5px;">
+            <button class="q-btn" onclick="setShipping(3000)">✈<small>3000</small></button>
+            <button class="q-btn" onclick="setShipping(5000)">📦<small>5000</small></button>
           </div>
         </div>
-
         <div class="field">
-          <label>Misc. Costs (LC)</label>
+          <label>Misc (LC)</label>
           <div class="iw">
             <div class="cb lc">LC</div>
-            <input type="number" id="other" value="0" placeholder="e.g. 500">
+            <input type="number" id="other" value="0">
           </div>
         </div>
+      </div>
 
-      </div><button class="btn-toggle" onclick="toggleBackCalc()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a6 6 0 010 12h-1"/></svg>
-        Reverse Calc: Find Target Price
-      </button>
+      <button class="btn-toggle" onclick="toggleBackCalc()">Reverse Calc</button>
       <div id="backCalcPanel">
-        <label>Target Net Profit (LC)</label>
+        <label>Target Profit (LC)</label>
         <div style="display:flex; gap:8px; margin-top:5px;">
-          <input type="number" id="targetProfit" value="3000" style="flex:1;">
-          <button onclick="calcBack()">Calculate</button>
+          <input type="number" id="targetProfit" value="3000">
+          <button onclick="calcBack()" style="background:var(--main); color:#fff; border:none; border-radius:var(--r-sm); padding:0 15px;">Go</button>
         </div>
       </div>
-
-    </div><div class="result-box">
-      <div class="res-row">
-        <span>Revenue <span id="salesJpy">LC 0</span></span>
-        <span>Fees <span id="feeJpy">LC 0</span></span>
-      </div>
-      <div id="profit">LC 0</div>
-      <div class="profit-rate-row">Margin: <span id="profitRate">0.0%</span></div>
     </div>
 
-    <button class="btn-save" onclick="saveRecord()">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
-      Log This Profit
-    </button>
-    <button class="btn-reset" onclick="resetInputs()">Reset Inputs</button>
+    <div class="result-box">
+      <div class="res-row">
+        <span>Rev: <span id="salesJpy">LC 0</span></span>
+        <span>Fee: <span id="feeJpy">LC 0</span></span>
+      </div>
+      <div id="profit">LC 0</div>
+      <div style="font-size:12px; opacity:0.5;">Margin: <span id="profitRate">0%</span></div>
+    </div>
 
-  </div><div id="reportPage" class="page">
+    <button class="btn-save" onclick="saveRecord()">Log Profit</button>
+    <button class="btn-reset" style="width:100%; background:none; border:none; color:var(--ink3); margin-top:10px; cursor:pointer;" onclick="resetInputs()">Reset Inputs</button>
+  </div>
 
+  <div id="reportPage" class="page">
     <div class="report-hero">
-      <h2 style="display:flex; justify-content:space-between; align-items:center; padding:0 0 4px;">
-        📈 Monthly Progress
-        <button class="q-btn" style="padding:4px 10px;" onclick="setGoal()">Set Goal</button>
-      </h2>
-      <div class="goal-meta">
-        <span id="goalText">Target: LC 100,000</span>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:12px; opacity:0.6;">MONTHLY TOTAL</span>
+        <button class="q-btn" style="min-height:unset; padding:4px 10px; border-radius:20px; font-size:10px;" onclick="setGoal()">Set Goal</button>
+      </div>
+      <div id="monthTotal">LC 0</div>
+      <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:5px;">
+        <span id="goalText">Goal: LC 100k</span>
         <span id="percentText">0%</span>
       </div>
       <div class="bar-bg"><div id="goalBar" class="bar-fill"></div></div>
-      <div id="monthTotal" onclick="updateReport('all')">LC 0</div>
-      <div style="font-size:10px; text-align:center; color:rgba(255,255,255,0.35); margin-top:-8px;">Tap to view all</div>
     </div>
 
-    <div class="card" style="padding:14px 16px;">
-      <div class="sum-grid">
-        <div class="sum-item" id="filter-plus" onclick="updateReport('plus')">
-          <div style="color:var(--green);">Profitable</div>
-          <b id="plusCount" style="color:var(--green);">0</b>
-        </div>
-        <div class="sum-item" id="filter-minus" onclick="updateReport('minus')">
-          <div style="color:var(--red);">Losses</div>
-          <b id="minusCount" style="color:var(--red);">0</b>
-        </div>
-      </div>
+    <h2 style="margin:20px 0 10px;">🏆 Profit Ranking</h2>
+    <div class="ranking-card" id="rankingList">
+      <div style="text-align:center; color:var(--ink3); font-size:12px; padding:10px;">No records yet</div>
     </div>
 
+    <h2 style="margin:20px 0 10px;">📜 Recent History</h2>
     <div id="historyList"></div>
+  </div>
+</div>
 
-    <button class="btn-reset" style="color:var(--red); width:100%; opacity:0.6; margin-top:20px;" onclick="clearAllData()">Clear All Data</button>
-
-  </div></div><script>
+<script>
   const ids = ['itemName', 'rate', 'feePercent', 'saleUsd', 'cost', 'shipping', 'other'];
   const inputs = {};
   ids.forEach(id => inputs[id] = document.getElementById(id));
 
+  // 1. 自動為替取得機能
+  async function fetchRate() {
+    const dot = document.getElementById('rateDot');
+    dot.classList.add('syncing');
+    try {
+      const res = await fetch('https://open.er-api.com/v6/latest/USD');
+      const data = await res.json();
+      const jpyRate = Math.round(data.rates.JPY);
+      inputs.rate.value = jpyRate;
+      document.getElementById('rateDisplay').textContent = `LC ${jpyRate} / $1`;
+      calc();
+    } catch (e) {
+      console.log('Rate fetch failed');
+    } finally {
+      dot.classList.remove('syncing');
+    }
+  }
+
   window.onload = () => {
-    inputs.rate.value = localStorage.getItem('cfg_rate') || 150;
+    fetchRate(); // 起動時に実行
     inputs.feePercent.value = localStorage.getItem('cfg_fee') || 15;
     updateReport();
   };
@@ -504,20 +359,11 @@
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.getElementById(pId).classList.add('active');
     document.getElementById(pId === 'calcPage' ? 'tab-calc' : 'tab-report').classList.add('active');
-    if(pId === 'reportPage') updateReport('all');
-  }
-
-  function setShipping(v) { inputs.shipping.value = v; calc(); }
-  function toggleBackCalc() { 
-    const p = document.getElementById('backCalcPanel');
-    p.style.display = p.style.display === 'block' ? 'none' : 'block';
+    if(pId === 'reportPage') updateReport();
   }
 
   function calc() {
     const val = (id) => parseFloat(inputs[id].value) || 0;
-    localStorage.setItem('cfg_rate', inputs.rate.value);
-    localStorage.setItem('cfg_fee', inputs.feePercent.value);
-
     const sJpy = Math.round(val('saleUsd') * val('rate'));
     const fJpy = Math.round(sJpy * (val('feePercent') / 100));
     const profit = sJpy - (val('cost') + val('shipping') + val('other') + fJpy);
@@ -529,95 +375,84 @@
     pEl.textContent = (profit >= 0 ? 'LC ' : '-LC ') + Math.abs(profit).toLocaleString();
     pEl.style.color = profit >= 0 ? 'var(--green)' : 'var(--red)';
     document.getElementById('profitRate').textContent = pRate.toFixed(1) + '%';
-
-    // Header rate update
-    const rd = document.getElementById('rateDisplay');
-    if (rd) rd.textContent = 'LC ' + (val('rate') || 150) + ' / $1';
   }
   ids.forEach(id => inputs[id].addEventListener('input', calc));
 
-  function calcBack() {
-    const target = parseFloat(document.getElementById('targetProfit').value) || 0;
-    const val = (id) => parseFloat(inputs[id].value) || 0;
-    const rate = val('rate');
-    const fP = val('feePercent') / 100;
-    if(rate <= 0) return;
-    const res = (target + val('cost') + val('shipping') + val('other')) / (rate * (1 - fP));
-    inputs.saleUsd.value = Math.ceil(res);
-    calc();
-    showToast('Sale price auto-calculated!');
+  // 2. ワンタップ・コピー機能
+  function copyValue(id, btn, isPrice = false) {
+    let val = inputs[id].value;
+    if(!val) return;
+    if(isPrice) val = '$' + parseFloat(val).toFixed(2);
+    navigator.clipboard.writeText(val);
+    const oldIcon = btn.textContent;
+    btn.textContent = '✔';
+    btn.classList.add('copied');
+    showToast('Copied: ' + val);
+    setTimeout(() => { btn.textContent = oldIcon; btn.classList.remove('copied'); }, 1500);
   }
 
   function saveRecord() {
-    if(!inputs.saleUsd.value) return showToast('Please enter sale price');
-    const profit = parseInt(document.getElementById('profit').textContent.replace(/[A-Za-z\s,]/g, '').replace('-', '')) * (document.getElementById('profit').textContent.includes('-') ? -1 : 1);
-    const record = { id: Date.now(), name: inputs.itemName.value || 'Untitled', sale: inputs.saleUsd.value, profit: profit, date: new Date().toISOString() };
-    let data = JSON.parse(localStorage.getItem('ebay_global_data') || '[]');
+    if(!inputs.saleUsd.value) return showToast('Enter price first');
+    const profitStr = document.getElementById('profit').textContent.replace(/[^0-9-]/g, '');
+    const profit = parseInt(profitStr);
+    const record = { id: Date.now(), name: inputs.itemName.value || 'Untitled', sale: inputs.saleUsd.value, profit: profit };
+    let data = JSON.parse(localStorage.getItem('ebay_global_v2') || '[]');
     data.unshift(record);
-    localStorage.setItem('ebay_global_data', JSON.stringify(data));
-    showToast('Saved successfully! Delvey!');
+    localStorage.setItem('ebay_global_v2', JSON.stringify(data));
+    showToast('Profit Logged! Delvey!');
   }
 
-  function updateReport(filter = 'all') {
-    const data = JSON.parse(localStorage.getItem('ebay_global_data') || '[]');
+  // 3. 利益ランキング表示機能
+  function updateReport() {
+    const data = JSON.parse(localStorage.getItem('ebay_global_v2') || '[]');
     const goal = parseInt(localStorage.getItem('cfg_goal_global') || 100000);
-    let mSum = 0, pCount = 0, mCount = 0;
-    const listEl = document.getElementById('historyList');
-    listEl.innerHTML = '';
+    let total = 0;
+    
+    // Ranking Logic
+    const sorted = [...data].sort((a, b) => b.profit - a.profit).slice(0, 5);
+    const rankEl = document.getElementById('rankingList');
+    if(sorted.length > 0) {
+      rankEl.innerHTML = sorted.map((item, i) => `
+        <div class="rank-item">
+          <div class="rank-num">${i+1}</div>
+          <div style="flex:1; font-size:12px; font-weight:600;">${item.name}</div>
+          <div style="color:var(--green); font-weight:700;">LC ${item.profit.toLocaleString()}</div>
+        </div>
+      `).join('');
+    }
 
-    document.getElementById('filter-plus').classList.remove('active-filter');
-    document.getElementById('filter-minus').classList.remove('active-filter');
-    if(filter === 'plus') document.getElementById('filter-plus').classList.add('active-filter');
-    if(filter === 'minus') document.getElementById('filter-minus').classList.add('active-filter');
+    // History Logic
+    const histEl = document.getElementById('historyList');
+    histEl.innerHTML = data.map(item => {
+      total += item.profit;
+      return `
+        <div class="hist-card">
+          <div><b>${item.name}</b><br><small>$${item.sale}</small></div>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <b style="color:${item.profit>=0?'var(--green)':'var(--red)'}">LC ${item.profit.toLocaleString()}</b>
+            <button class="hist-del" onclick="deleteItem(${item.id})">×</button>
+          </div>
+        </div>
+      `;
+    }).join('');
 
-    data.forEach(item => {
-      mSum += item.profit;
-      if(item.profit >= 0) pCount++; else mCount++;
-      let show = (filter === 'all') || (filter === 'plus' && item.profit >= 0) || (filter === 'minus' && item.profit < 0);
-      if(show) {
-        const div = document.createElement('div');
-        div.className = 'hist-card';
-        div.innerHTML = `<div><b>${item.name}</b><br><small>Sold: $${item.sale}</small></div>
-                         <div style="display:flex;align-items:center;"><b style="color:${item.profit>=0?'var(--green)':'var(--red)'}">LC ${item.profit.toLocaleString()}</b>
-                         <button class="hist-del" onclick="deleteItem(${item.id})">×</button></div>`;
-        listEl.appendChild(div);
-      }
-    });
-    document.getElementById('monthTotal').textContent = 'LC ' + mSum.toLocaleString();
-    document.getElementById('plusCount').textContent = pCount;
-    document.getElementById('minusCount').textContent = mCount;
-    document.getElementById('goalText').textContent = 'Target: LC ' + goal.toLocaleString();
-    const per = Math.min(100, Math.max(0, Math.round((mSum / goal) * 100)));
+    document.getElementById('monthTotal').textContent = 'LC ' + total.toLocaleString();
+    const per = Math.min(100, Math.max(0, Math.round((total / goal) * 100)));
     document.getElementById('goalBar').style.width = per + '%';
-    document.getElementById('goalBar').style.backgroundPosition = (100 - per) + '% center';
     document.getElementById('percentText').textContent = per + '%';
   }
 
   function deleteItem(id) {
-    if(!confirm('Delete this record?')) return;
-    let data = JSON.parse(localStorage.getItem('ebay_global_data') || '[]');
+    let data = JSON.parse(localStorage.getItem('ebay_global_v2') || '[]');
     data = data.filter(i => i.id !== id);
-    localStorage.setItem('ebay_global_data', JSON.stringify(data));
+    localStorage.setItem('ebay_global_v2', JSON.stringify(data));
     updateReport();
   }
 
-  function setGoal() {
-    const g = prompt('Enter your target profit (LC)', '100000');
-    if(g) { localStorage.setItem('cfg_goal_global', g); updateReport(); }
-  }
-
-  function resetInputs() {
-    ['itemName', 'saleUsd', 'cost', 'shipping', 'other'].forEach(id => inputs[id].value = (id==='other' ? 0 : ''));
-    calc();
-  }
-
-  function clearAllData() { if(confirm('Clear all data? This cannot be undone.')) { localStorage.removeItem('ebay_global_data'); updateReport(); } }
-
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg; t.style.display = 'block';
-    setTimeout(() => t.style.display = 'none', 2000);
-  }
+  function setShipping(v) { inputs.shipping.value = v; calc(); }
+  function toggleBackCalc() { const p = document.getElementById('backCalcPanel'); p.style.display = p.style.display === 'block' ? 'none' : 'block'; }
+  function showToast(m) { const t = document.getElementById('toast'); t.textContent = m; t.style.display = 'block'; setTimeout(() => t.style.display='none', 2000); }
+  function resetInputs() { ['itemName', 'saleUsd', 'cost', 'shipping'].forEach(id => inputs[id].value = ''); calc(); }
 </script>
 </body>
 </html>
