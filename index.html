@@ -14,21 +14,21 @@
       --main-l:  #f8ece6;
       --accent:  #c0593a;
       --bg:      #f9f7f2;
-      --bg2:     #f2ede5;
+      --bg2:      #f2ede5;
       --surface: #ffffff;
       --border:  #e8e3db;
-      --ink:     #18150f;
+      --ink:      #18150f;
       --ink2:    #574e43;
       --ink3:    #9a8e80;
-      --green:   #1a9e5c;
+      --green:    #1a9e5c;
       --green-l: #e4f7ee;
-      --red:     #d03a3a;
+      --red:      #d03a3a;
       --red-l:   #fceaea;
       --dollar-bg:  #edf7f2;
       --dollar-bd:  #b8dece;
       --dollar-txt: #1a7f50;
-      --yen-bg:     #fef6ea;
-      --yen-bd:     #f0d9b0;
+      --yen-bg:      #fef6ea;
+      --yen-bd:      #f0d9b0;
       --yen-txt:    #9a6010;
       --r:    14px;
       --r-sm: 10px;
@@ -48,12 +48,13 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── Header ── */
+    /* ── Header 固定 ── */
     .header {
       background: var(--ink);
       padding: 13px 18px 11px;
       display: flex; align-items: center; gap: 11px;
-      position: sticky; top: 0; z-index: 100;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: 56px;
     }
     .hd-logo {
       width: 32px; height: 32px; background: var(--main);
@@ -75,12 +76,13 @@
     .hd-dot.loading { background: #f5a623; animation: blink 1s infinite alternate; }
     @keyframes blink { from { opacity: 1; } to { opacity: 0.3; } }
 
-    /* ── Tabs ── */
+    /* ── Tabs 固定 ── */
     .tabs {
       display: flex; background: var(--ink);
       border-bottom: 1px solid rgba(255,255,255,0.07);
       padding: 0 18px;
-      position: sticky; top: 56px; z-index: 99; /* タブも固定 */
+      position: fixed; top: 56px; left: 0; right: 0; z-index: 199;
+      height: 45px;
     }
     .tab {
       flex: 1; padding: 10px 0 9px; text-align: center;
@@ -91,15 +93,36 @@
     }
     .tab.active { color: #fff; border-bottom-color: var(--main); font-weight: 500; }
 
-    /* ── Layout 修正版 ── */
+    /* ── Result box 固定 ── */
+    .result-box {
+      background: var(--ink); color: #fff;
+      border-radius: var(--r-lg); padding: 14px 20px;
+      text-align: center;
+      position: fixed; top: 101px; left: 14px; right: 14px; z-index: 190;
+      max-width: 872px; margin: 0 auto;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+    .result-box::after {
+      content: ''; position: absolute; top: -60px; right: -60px;
+      width: 180px; height: 180px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(192,89,58,0.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ── Layout 固定パーツの高さ分を確保 ── */
     .container { 
       width: 100%; 
       max-width: 900px; 
       margin: 0 auto; 
-      padding: 18px 14px 60px; 
+      padding: 275px 14px 60px; /* 固定パーツ(56+45+160位)の余白 */
     }
     .page { display: none; }
     .page.active { display: block; }
+
+    /* レポートページの場合は固定結果ボックスがないため余白を調整 */
+    #reportPage.active ~ .container, 
+    #reportPage.active { padding-top: 115px; }
 
     /* ── レポート用のグリッド設定 ── */
     .report-grid {
@@ -116,7 +139,7 @@
       }
       .report-side {
         position: sticky;
-        top: 100px;
+        top: 115px;
       }
     }
 
@@ -221,28 +244,13 @@
     #backCalcPanel input { flex: 1; min-height: 44px; }
     #backCalcPanel button {
       background: var(--main); color: #fff; border: none;
-      border-radius: var(--r-sm); padding: 0 18px;
+      border-radius: var(--r-sm) ; padding: 0 18px;
       font-size: 13px; font-weight: 500; font-family: 'Inter', sans-serif;
       cursor: pointer; white-space: nowrap; min-height: 44px;
       transition: background 0.15s;
     }
     #backCalcPanel button:hover { background: var(--main-h); }
 
-    /* ── Result box 固定版 ── */
-    .result-box {
-      background: var(--ink); color: #fff;
-      border-radius: var(--r-lg); padding: 14px 20px; /* 上下少しスリム化 */
-      text-align: center; margin-top: 4px;
-      position: sticky; top: 106px; z-index: 90; /* ヘッダー(56px)+タブ(45px)+αの位置で固定 */
-      box-shadow: 0 8px 30px rgba(0,0,0,0.2); /* 浮いている感を強調 */
-      overflow: hidden;
-    }
-    .result-box::after {
-      content: ''; position: absolute; top: -60px; right: -60px;
-      width: 180px; height: 180px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(192,89,58,0.18) 0%, transparent 70%);
-      pointer-events: none;
-    }
     .res-row {
       display: flex; justify-content: space-between;
       font-size: 10.5px; font-weight: 300; color: rgba(255,255,255,0.38);
@@ -381,7 +389,7 @@
       </div>
     </div>
 
-    <div class="card" style="margin-top:20px;">
+    <div class="card">
       <h2>商品メモ</h2>
       <div class="form-grid" style="padding-top:10px;">
         <div class="field full">
@@ -574,6 +582,17 @@
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.getElementById(pId).classList.add('active');
     document.getElementById(pId === 'calcPage' ? 'tab-calc' : 'tab-report').classList.add('active');
+    
+    // 集計ページでは利益結果ボックスを隠す
+    const resultBox = document.querySelector('.result-box');
+    if(pId === 'reportPage') {
+      resultBox.style.display = 'none';
+      document.querySelector('.container').style.paddingTop = '115px';
+    } else {
+      resultBox.style.display = 'block';
+      document.querySelector('.container').style.paddingTop = '275px';
+    }
+    
     window.scrollTo(0,0);
   }
 
@@ -722,27 +741,30 @@
     showToast('リセットしました');
   }
 
-  function showToast(m) {
-    const t = document.getElementById('toast');
-    t.textContent = m; t.style.display = 'block';
-    setTimeout(() => t.style.display = 'none', 1800);
-  }
-
   function setGoal() {
-    const g = prompt('目標月利を入力してください', '100000');
-    if(g) {
-      localStorage.setItem('cfg_goal', g);
+    const current = localStorage.getItem('cfg_goal') || 100000;
+    const val = prompt('今月の目標純利益を入力してください (円)', current);
+    if(val !== null && !isNaN(val)) {
+      localStorage.setItem('cfg_goal', val);
       updateReport();
     }
   }
 
   function clearAllData() {
-    if(confirm('全ての記録を削除してもよろしいですか？')) {
+    if(confirm('全ての記録を削除します。よろしいですか？')) {
       localStorage.removeItem('ebay_pro_data');
       updateReport();
       showToast('全データを削除しました');
     }
   }
+
+  function showToast(m) {
+    const t = document.getElementById('toast');
+    t.textContent = m;
+    t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 2500);
+  }
 </script>
+
 </body>
 </html>
