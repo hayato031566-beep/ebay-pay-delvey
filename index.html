@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>eBay Profit Calc - Delvey</title>
+  <title>eBay Profit Calculator - Delvey</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -24,7 +24,7 @@
       --green-l: #e4f7ee;
       --red:     #d03a3a;
       --red-l:   #fceaea;
-      --dollar-bg:  #top-f7f2;
+      --dollar-bg:  #edf7f2;
       --dollar-bd:  #b8dece;
       --dollar-txt: #1a7f50;
       --yen-bg:     #fef6ea;
@@ -177,7 +177,7 @@
     }
     .cb.d { background: var(--dollar-bg); border-color: var(--dollar-bd); color: var(--dollar-txt); }
     .cb.y { background: var(--yen-bg);    border-color: var(--yen-bd);    color: var(--yen-txt); }
-    .cb.p { background: var(--bg2);        border-color: var(--border);    color: var(--ink3); font-size: 13px; }
+    .cb.p { background: var(--bg2);         border-color: var(--border);    color: var(--ink3); font-size: 13px; }
 
     input {
       padding: 11px 12px;
@@ -244,6 +244,7 @@
       font-size: 48px; font-weight: 300; letter-spacing: -0.05em;
       line-height: 1; margin: 2px 0 4px;
     }
+    #profitStatus { font-size: 10px; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; display: block; }
     .profit-rate-row { font-size: 11px; color: rgba(255,255,255,0.35); }
 
     /* Copy Buttons */
@@ -319,8 +320,8 @@
     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
   </div>
   <div class="hd-text">
-    <div class="hd-name">eBay Profit <span>Delvey!</span></div>
-    <div class="hd-sub">eBay Export Profit Calculator</div>
+    <div class="hd-name">eBay Profit <span>Calculator</span></div>
+    <div class="hd-sub">Smart Profit Tracker by Delvey</div>
   </div>
   <div class="hd-rate" id="rateBadge"><div class="hd-dot" id="rateDot"></div><span id="rateDisplay">Loading...</span></div>
 </div>
@@ -335,43 +336,43 @@
   <div id="calcPage" class="page active">
     
     <div class="card">
-      <h2>Item Note</h2>
+      <h2>Item Info</h2>
       <div class="form-grid" style="padding-top:10px;">
         <div class="field full">
-          <input type="text" id="itemName" placeholder="e.g. Game Console / Anime Figure">
+          <input type="text" id="itemName" placeholder="Item name or SKU">
         </div>
       </div>
     </div>
 
     <div class="card">
-      <h2>Transaction Details</h2>
+      <h2>Sale Details</h2>
       <div class="form-grid">
         <div class="field">
           <label>Exchange Rate</label>
-          <div class="iw"><div class="cb y">¥</div><input type="number" id="rate" value="150" placeholder="150"></div>
+          <div class="iw"><div class="cb y">¥</div><input type="number" id="rate" value="150" placeholder="e.g. 150"></div>
         </div>
         <div class="field">
           <label>eBay Fee (%)</label>
-          <div class="iw"><div class="cb p">%</div><input type="number" id="feePercent" value="15" placeholder="15"></div>
+          <div class="iw"><div class="cb p">%</div><input type="number" id="feePercent" value="15" placeholder="e.g. 15"></div>
         </div>
         <div class="field">
-          <label>Sale Price ($)</label>
-          <div class="iw"><div class="cb d">$</div><input type="number" id="saleUsd" placeholder="e.g. 120.00"></div>
+          <label>Selling Price ($)</label>
+          <div class="iw"><div class="cb d">$</div><input type="number" id="saleUsd" placeholder="0.00"></div>
         </div>
         <div class="field">
-          <label>Purchase Cost (¥)</label>
-          <div class="iw"><div class="cb y">¥</div><input type="number" id="cost" placeholder="e.g. 5,000"></div>
+          <label>Purchase Price (¥)</label>
+          <div class="iw"><div class="cb y">¥</div><input type="number" id="cost" placeholder="Item cost"></div>
         </div>
         <div class="field">
           <label>Shipping (¥)</label>
-          <div class="iw"><div class="cb y">¥</div><input type="number" id="shipping" placeholder="e.g. 3,000"></div>
+          <div class="iw"><div class="cb y">¥</div><input type="number" id="shipping" placeholder="Shipping cost"></div>
           <div class="quick-group">
-            <button class="q-btn" onclick="setShipping(3000)">✈ FedEx<small>¥3k</small></button>
-            <button class="q-btn" onclick="setShipping(5000)">📦 EMS<small>¥5k</small></button>
+            <button class="q-btn" onclick="setShipping(3000)">✈ FedEx<small>~¥3k</small></button>
+            <button class="q-btn" onclick="setShipping(5000)">📦 EMS<small>~¥5k</small></button>
           </div>
         </div>
         <div class="field">
-          <label>Misc Expenses (¥)</label>
+          <label>Other Expenses (¥)</label>
           <div class="iw"><div class="cb y">¥</div><input type="number" id="other" value="0"></div>
         </div>
       </div>
@@ -379,37 +380,38 @@
 
     <div class="result-box">
       <div class="res-row">
-        <span>Sales <span id="salesJpy">¥0</span></span>
-        <span>Fees <span id="feeJpy">¥0</span></span>
+        <span>Total Sales <span id="salesJpy">¥0</span></span>
+        <span>Total Fees <span id="feeJpy">¥0</span></span>
       </div>
+      <span id="profitStatus">Ready</span>
       <div id="profit">¥0</div>
       <div class="profit-rate-row">Profit Margin <span id="profitRate">0.0%</span></div>
       <div class="copy-god-row">
         <button onclick="godCopy('title', this)"><span>📝</span>Title</button>
         <button onclick="godCopy('price', this)"><span>💲</span>Price($)</button>
-        <button onclick="godCopy('desc', this)"><span>✨</span>Template</button>
-        <button onclick="godCopy('memo', this)"><span>📊</span>Profit Memo</button>
+        <button onclick="godCopy('desc', this)"><span>✨</span>Description</button>
+        <button onclick="godCopy('memo', this)"><span>📊</span>Profit Summary</button>
       </div>
     </div>
 
     <button class="btn-toggle" onclick="toggleBackCalc()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a6 6 0 010 12h-1"/></svg>
-      Reverse Calc: Target Selling Price
+      Calculate Target Selling Price
     </button>
     <div id="backCalcPanel">
       <label>Target Profit (¥)</label>
       <div style="display:flex; gap:8px; margin-top:5px;">
         <input type="number" id="targetProfit" value="3000">
-        <button onclick="calcBack()">Calculate</button>
+        <button onclick="calcBack()">Calculate Price</button>
       </div>
     </div>
 
     <div style="margin-top: 20px; padding-bottom: 40px;">
       <button class="btn-save" onclick="saveRecord()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
-        Save this Record
+        Save Record
       </button>
-      <button class="btn-reset" onclick="resetInputs()">Reset Inputs</button>
+      <button class="btn-reset" onclick="resetInputs()">Clear Form</button>
     </div>
   </div>
 
@@ -427,11 +429,11 @@
           </div>
           <div class="bar-bg"><div id="goalBar" class="bar-fill"></div></div>
           <div id="monthTotal" onclick="updateReport('all')">¥0</div>
-          <div style="font-size:9px; text-align:center; color:rgba(255,255,255,0.25); margin-top:-8px;">Tap to show all records</div>
+          <div style="font-size:9px; text-align:center; color:rgba(255,255,255,0.25); margin-top:-8px;">Tap amount to show all records</div>
 
           <button class="btn-share-x" onclick="shareOnX()">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-            Xでシェアする
+            Share on X
           </button>
         </div>
         
@@ -442,7 +444,7 @@
               <b id="plusCount" style="color:var(--green);">0</b>
             </div>
             <div class="sum-item" id="filter-minus" onclick="updateReport('minus')">
-              <div style="color:var(--red);">Deficit</div>
+              <div style="color:var(--red);">Loss</div>
               <b id="minusCount" style="color:var(--red);">0</b>
             </div>
           </div>
@@ -454,10 +456,10 @@
       <div class="report-side">
         <div class="card" style="padding:14px 16px;">
           <h2 style="padding: 0 0 10px 0; border-bottom: 1px solid var(--border); margin-bottom: 10px;">
-            👑 Top Performance
+            👑 Top Items
           </h2>
           <div class="rank-tabs">
-            <div class="rank-tab-mini active" id="rt-profit" onclick="setRankMode('profit')">By Amount</div>
+            <div class="rank-tab-mini active" id="rt-profit" onclick="setRankMode('profit')">By Profit</div>
             <div class="rank-tab-mini" id="rt-rate" onclick="setRankMode('rate')">By Margin</div>
           </div>
           <div id="rankingList"></div>
@@ -476,9 +478,9 @@
   let currentRankMode = 'profit';
   let currentFilter = 'all'; 
 
-  // --- ICL Function ---
+  // --- Utility Functions ---
   const fmt = (val, cur = 'JPY') => {
-    return new Intl.NumberFormat(navigator.language, {
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: cur,
       maximumFractionDigits: cur === 'JPY' ? 0 : 2
@@ -509,12 +511,12 @@
       if(data && data.rates && data.rates.JPY) {
         const currentRate = Math.floor(data.rates.JPY);
         inputs.rate.value = currentRate;
-        display.textContent = `${fmt(currentRate)}/$`;
+        display.textContent = `¥${currentRate} / $1`;
         calc();
-        showToast(`Rate updated: ${fmt(currentRate)}`);
+        showToast(`Rate auto-updated: ¥${currentRate}`);
       }
     } catch(e) {
-      display.textContent = `${fmt(inputs.rate.value)}/$ (Manual)`;
+      display.textContent = `¥${inputs.rate.value} / $1 (Manual)`;
     } finally {
       dot.classList.remove('loading');
     }
@@ -532,20 +534,20 @@
     const title = inputs.itemName.value || '';
     const price = inputs.saleUsd.value || '';
     const cost = inputs.cost.value || 0;
-    const profit = document.getElementById('profit').innerText;
+    const profitText = document.getElementById('profit').innerText;
     let textToCopy = '';
     
     if (type === 'title') {
       textToCopy = title;
-      if(!textToCopy) return showToast('Title is empty');
+      if(!textToCopy) return showToast('Item name is empty');
     } else if (type === 'price') {
       textToCopy = price;
-      if(!textToCopy) return showToast('Price is empty');
+      if(!textToCopy) return showToast('Sale price is empty');
     } else if (type === 'desc') {
-      if(!title) return showToast('Title is empty');
-      textToCopy = `【${title}】\n\nCondition: Used - Excellent\nThank you for visiting! Please feel free to ask any questions.`;
+      if(!title) return showToast('Item name required for description');
+      textToCopy = `【${title}】\n\nCondition: Used - Excellent\nThank you for looking! If you have any questions, please feel free to ask.`;
     } else if (type === 'memo') {
-      textToCopy = `【${title || 'Untitled'}】\nPrice: ${fmt(price || 0, 'USD')}\nCost: ${fmt(cost)}\nProfit: ${profit}`;
+      textToCopy = `Item: ${title || 'Unnamed'}\nSale: ${fmt(price || 0, 'USD')}\nCost: ${fmt(cost)}\nNet Profit: ${profitText}`;
     }
 
     navigator.clipboard.writeText(textToCopy).then(() => {
@@ -577,8 +579,22 @@
     document.getElementById('feeJpy').textContent = fmt(fJpy);
     
     const pEl = document.getElementById('profit');
+    const statusEl = document.getElementById('profitStatus');
     pEl.textContent = fmt(profit);
-    pEl.style.color = profit >= 0 ? '#2ecc71' : '#ff6b6b';
+    
+    if (profit > 0) {
+      pEl.style.color = '#2ecc71';
+      statusEl.textContent = 'Profitable';
+      statusEl.style.color = '#2ecc71';
+    } else if (profit < 0) {
+      pEl.style.color = '#ff6b6b';
+      statusEl.textContent = 'Loss';
+      statusEl.style.color = '#ff6b6b';
+    } else {
+      pEl.style.color = '#fff';
+      statusEl.textContent = 'Break-even';
+      statusEl.style.color = 'rgba(255,255,255,0.5)';
+    }
     
     const pRate = sJpy > 0 ? (profit / sJpy) * 100 : 0;
     document.getElementById('profitRate').textContent = pRate.toFixed(1) + '%';
@@ -603,21 +619,22 @@
     
     inputs.saleUsd.value = requiredUsd.toFixed(2);
     calc();
-    showToast(`Price set to ${fmt(requiredUsd, 'USD')}`);
+    showToast(`Target price: ${fmt(requiredUsd, 'USD')}`);
   }
 
   function saveRecord() {
-    if(!inputs.saleUsd.value) return showToast('Please enter sale price');
+    if(!inputs.saleUsd.value) return showToast('Sale price required');
+    if(!inputs.cost.value) showToast('Warning: Purchase cost is 0');
+
     const v = (id) => parseFloat(inputs[id].value) || 0;
     const sJpy = Math.round(v('saleUsd') * v('rate'));
     const fJpy = Math.round(sJpy * (v('feePercent') / 100));
     const profitVal = sJpy - (v('cost') + v('shipping') + v('other') + fJpy);
-    
     const pRate = sJpy > 0 ? (profitVal / sJpy) * 100 : 0;
 
     const rec = { 
       id: Date.now(), 
-      name: inputs.itemName.value || 'Untitled', 
+      name: inputs.itemName.value || 'Unnamed Record', 
       sale: inputs.saleUsd.value, 
       profit: profitVal,
       rate: pRate.toFixed(1)
@@ -626,7 +643,7 @@
     let data = JSON.parse(localStorage.getItem('ebay_pro_data') || '[]');
     data.unshift(rec);
     localStorage.setItem('ebay_pro_data', JSON.stringify(data));
-    showToast('Record Saved!');
+    showToast('Record saved!');
     updateReport(currentFilter); 
   }
 
@@ -652,7 +669,7 @@
       }).slice(0, 5);
       
       if(sortedData.length === 0) {
-        rankList.innerHTML = '<div style="text-align:center; font-size:11px; color:var(--ink3); padding:10px 0;">No data yet</div>';
+        rankList.innerHTML = '<div style="text-align:center; font-size:11px; color:var(--ink3); padding:10px 0;">No records yet</div>';
       } else {
         sortedData.forEach((item, index) => {
           rankList.innerHTML += `
@@ -692,15 +709,16 @@
     document.getElementById('plusCount').textContent = plus;
     document.getElementById('minusCount').textContent = minus;
     document.getElementById('goalText').textContent = `Goal: ${fmt(goal)}`;
-    const p = Math.min(100, Math.max(0, (total/goal)*100));
-    document.getElementById('goalBar').style.width = p + '%';
-    document.getElementById('percentText').textContent = p.toFixed(1) + '%';
+    const progress = Math.min(100, Math.max(0, (total/goal)*100));
+    document.getElementById('goalBar').style.width = progress + '%';
+    document.getElementById('percentText').textContent = progress.toFixed(1) + '%';
   }
 
   function shareOnX() {
     const totalProfit = document.getElementById('monthTotal').textContent;
-    const text = encodeURIComponent(`今月のeBay利益は ${totalProfit}！ #デルベイ`);
-    const url = `https://twitter.com/intent/tweet?text=${text}`;
+    const text = encodeURIComponent(`I've tracked ${totalProfit} in eBay profits this month! 📈 Calculate your margins with Delvey.\n\n#eBaySeller #ResellerLife`);
+    const pageUrl = encodeURIComponent(window.location.href);
+    const url = `https://twitter.com/intent/tweet?text=${text}&url=${pageUrl}`;
     window.open(url, '_blank');
   }
 
@@ -717,12 +735,13 @@
     inputs.cost.value = '';
     inputs.shipping.value = '';
     inputs.itemName.value = '';
+    inputs.other.value = 0;
     calc();
-    showToast('Inputs reset');
+    showToast('Form cleared');
   }
 
   function setGoal() {
-    const g = prompt("Set monthly profit goal (JPY):", "100000");
+    const g = prompt("Set your monthly profit goal (¥):", "100000");
     if(g) {
       localStorage.setItem('cfg_goal', g);
       updateReport(currentFilter);
@@ -730,9 +749,11 @@
   }
 
   function clearAllData() {
-    if(confirm("Are you sure you want to delete all saved records?")) {
+    if(confirm("Are you sure you want to delete all saved records? This cannot be undone.")) {
       localStorage.removeItem('ebay_pro_data');
+      localStorage.removeItem('cfg_goal');
       updateReport('all');
+      showToast('All data cleared');
     }
   }
 </script>
