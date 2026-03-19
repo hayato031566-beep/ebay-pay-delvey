@@ -93,24 +93,6 @@
     }
     .tab.active { color: #fff; border-bottom-color: var(--main); font-weight: 500; }
 
-    /* ── Result Box ── */
-    .result-box {
-      background: var(--ink); color: #fff;
-      border-radius: var(--r-lg); padding: 14px 20px;
-      text-align: center;
-      position: relative;
-      z-index: 10;
-      max-width: 872px; margin: 0 auto 14px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-      overflow: hidden;
-    }
-    .result-box::after {
-      content: ''; position: absolute; top: -60px; right: -60px;
-      width: 180px; height: 180px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(192,89,58,0.18) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
     /* ── Layout ── */
     .container { 
       width: 100%; 
@@ -120,24 +102,6 @@
     }
     .page { display: none; }
     .page.active { display: block; }
-
-    .report-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    @media (min-width: 800px) {
-      .report-grid {
-        display: grid;
-        grid-template-columns: 1fr 320px;
-        align-items: start;
-      }
-      .report-side {
-        position: sticky;
-        top: 115px;
-      }
-    }
 
     /* ── Card ── */
     .card {
@@ -196,45 +160,15 @@
       border-color: var(--main); background: var(--surface);
       box-shadow: 0 0 0 3px rgba(192,89,58,0.10);
     }
-    .iw:focus-within .cb { border-color: var(--main); }
 
-    /* ── Quick Buttons ── */
-    .quick-group { display: flex; gap: 7px; margin-top: 8px; }
-    .q-btn {
-      flex: 1; background: var(--bg2); border: 1px solid var(--border);
-      padding: 10px 4px; border-radius: var(--r-sm);
-      font-size: 11.5px; font-weight: 600; color: var(--ink2);
-      cursor: pointer; font-family: 'Inter', sans-serif; line-height: 1.3;
-      transition: background 0.15s, color 0.15s, border-color 0.15s;
-      min-height: 44px; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 2px;
+    /* ── Result Box (Moved Down) ── */
+    .result-box {
+      background: var(--ink); color: #fff;
+      border-radius: var(--r-lg); padding: 14px 20px;
+      text-align: center; margin: 20px 0 14px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+      position: relative; overflow: hidden;
     }
-    .q-btn:hover  { background: var(--main-l); border-color: rgba(192,89,58,0.35); color: var(--main-h); }
-    .q-btn:active { transform: scale(0.97); }
-    .q-btn small  { font-size: 9px; font-weight: 400; opacity: 0.6; }
-
-    /* ── Back-calc ── */
-    .btn-toggle {
-      display: flex; align-items: center; justify-content: center; gap: 6px;
-      width: calc(100% - 36px); margin: 0 18px 14px;
-      padding: 11px; background: var(--bg2);
-      border: 1px solid var(--border); border-radius: var(--r-sm);
-      font-size: 12px; font-weight: 500; color: var(--ink2);
-      cursor: pointer; font-family: 'Inter', sans-serif;
-      transition: all 0.15s; min-height: 44px;
-    }
-    #backCalcPanel {
-      display: none; background: var(--main-l);
-      border: 1px solid rgba(192,89,58,0.20);
-      padding: 15px 18px; border-radius: var(--r-sm);
-      margin: 0 18px 14px;
-    }
-    #backCalcPanel button {
-      background: var(--main); color: #fff; border: none;
-      border-radius: var(--r-sm) ; padding: 0 18px;
-      font-size: 13px; font-weight: 500; cursor: pointer; min-height: 44px;
-    }
-
     .res-row {
       display: flex; justify-content: space-between;
       font-size: 10.5px; font-weight: 300; color: rgba(255,255,255,0.38);
@@ -246,68 +180,64 @@
     }
     .profit-rate-row { font-size: 11px; color: rgba(255,255,255,0.35); }
 
+    /* ── Quick Buttons ── */
+    .quick-group { display: flex; gap: 7px; margin-top: 8px; }
+    .q-btn {
+      flex: 1; background: var(--bg2); border: 1px solid var(--border);
+      padding: 10px 4px; border-radius: var(--r-sm);
+      font-size: 11.5px; font-weight: 600; color: var(--ink2);
+      cursor: pointer; min-height: 44px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+
+    /* ── Reverse Calc ── */
+    .btn-toggle {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      width: 100%; margin-bottom: 14px;
+      padding: 11px; background: var(--bg2);
+      border: 1px solid var(--border); border-radius: var(--r-sm);
+      font-size: 12px; font-weight: 500; color: var(--ink2);
+      cursor: pointer; min-height: 44px;
+    }
+    #backCalcPanel {
+      display: none; background: var(--main-l);
+      border: 1px solid rgba(192,89,58,0.20);
+      padding: 15px 18px; border-radius: var(--r-sm);
+      margin-bottom: 14px;
+    }
+
     /* Copy Buttons */
     .copy-god-row {
       display: flex; gap: 8px; margin-top: 12px;
-      position: relative; z-index: 10;
     }
     .copy-god-row button {
       flex: 1; background: rgba(255,255,255,0.08);
       border: 1px solid rgba(255,255,255,0.15); color: #fff;
       border-radius: 8px; padding: 8px 4px; font-size: 10px; font-weight: 500;
-      cursor: pointer; transition: 0.2s; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 4px; font-family: 'Inter', sans-serif;
+      cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center;
     }
-    .copy-god-row button span { font-size: 13px; }
-    .copy-god-row button.copied { background: rgba(46,204,113,0.2); border-color: #2ecc71; color: #2ecc71; }
 
     /* Save / Reset */
     .btn-save {
       width: 100%; padding: 15px; background: var(--main); color: #fff; border: none;
       border-radius: var(--r-sm); font-weight: 600; font-size: 15px;
-      margin-top: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px;
     }
     .btn-reset {
       width: 100%; background: none; border: none; color: var(--ink3);
-      text-decoration: none; margin-top: 12px; font-size: 11.5px;
-      cursor: pointer; display: block; text-align: center; opacity: 0.65;
+      margin-top: 12px; font-size: 11.5px; cursor: pointer; display: block; text-align: center; opacity: 0.65;
     }
 
-    /* Report & Toast */
-    .report-hero { background: var(--ink); color: #fff; border-radius: var(--r-lg); padding: 20px; margin-bottom: 10px; position: relative; overflow: hidden; }
-    #monthTotal { font-size: 44px; font-weight: 300; letter-spacing: -0.04em; color: #fff; text-align: center; cursor: pointer; margin: 4px 0 12px; }
-    .goal-meta { display: flex; justify-content: space-between; font-size: 10.5px; font-weight: 300; color: rgba(255,255,255,0.35); margin-bottom: 8px; }
-    .bar-bg { background: rgba(255,255,255,0.10); height: 10px; border-radius: 6px; overflow: hidden; }
-    .bar-fill { height: 100%; width: 0%; border-radius: 6px; background: linear-gradient(90deg, #e8593c 0%, #f5a623 60%, #2ecc71 100%); transition: width 0.7s ease; }
-    
-    .sum-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0 0; }
-    .sum-item { background: var(--surface); padding: 14px 12px; border-radius: var(--r); text-align: center; cursor: pointer; border: 1.5px solid var(--border); }
-    .sum-item.active-filter { border-color: var(--main); background: var(--main-l); }
-    .sum-item div { font-size: 9px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; margin-bottom: 5px; }
-    .sum-item b { font-size: 28px; font-weight: 300; display: block; }
-    
-    .hist-card { background: var(--surface); padding: 12px 14px; border-radius: var(--r-sm); margin-bottom: 6px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
-    .hist-del { color: var(--red); background: none; border: none; font-size: 18px; padding: 4px 7px; cursor: pointer; }
     #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 12px; display: none; z-index: 1000; }
+    
+    /* Reports */
+    .report-hero { background: var(--ink); color: #fff; border-radius: var(--r-lg); padding: 20px; margin-bottom: 10px; text-align: center; }
+    #monthTotal { font-size: 44px; font-weight: 300; margin-bottom: 10px; }
+    .bar-bg { background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; }
+    .bar-fill { height: 100%; background: var(--main); border-radius: 4px; width: 0%; transition: 0.5s; }
+    .hist-card { background: #fff; padding: 15px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
 
-    /* Ranking */
-    .rank-tabs { display: flex; gap: 5px; margin-bottom: 10px; }
-    .rank-tab-mini { flex: 1; font-size: 10px; padding: 4px; background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; cursor: pointer; text-align: center; }
-    .rank-tab-mini.active { background: var(--main); color: #fff; border-color: var(--main); }
-    .rank-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed var(--border); }
-    .rank-badge { width: 22px; height: 22px; border-radius: 50%; background: var(--bg2); color: var(--ink3); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; margin-right: 10px; }
-    .rank-info { flex: 1; font-size: 13px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .rank-profit b { font-size: 14px; color: var(--green); display: block; }
-    .rank-profit small { font-size: 9px; color: var(--ink3); }
-
-    /* Share Button Styles */
-    .btn-share-x {
-      width: 100%; padding: 12px; background: #000; color: #fff; border: none;
-      border-radius: var(--r-sm); font-weight: 600; font-size: 13px;
-      margin-top: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-    }
-
-    @media (max-width: 360px) { #profit { font-size: 38px; } #monthTotal{ font-size: 36px; } }
+    @media (max-width: 360px) { #profit { font-size: 38px; } }
   </style>
 </head>
 <body>
@@ -333,6 +263,50 @@
 <div class="container">
 
   <div id="calcPage" class="page active">
+    
+    <div class="card">
+      <h2>Item Note</h2>
+      <div class="form-grid" style="padding-top:10px;">
+        <div class="field full">
+          <input type="text" id="itemName" placeholder="e.g. Game Console / Anime Figure">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Transaction Details</h2>
+      <div class="form-grid">
+        <div class="field">
+          <label>Exchange Rate</label>
+          <div class="iw"><div class="cb y">¥</div><input type="number" id="rate" value="150"></div>
+        </div>
+        <div class="field">
+          <label>eBay Fee (%)</label>
+          <div class="iw"><div class="cb p">%</div><input type="number" id="feePercent" value="15"></div>
+        </div>
+        <div class="field">
+          <label>Sale Price ($)</label>
+          <div class="iw"><div class="cb d">$</div><input type="number" id="saleUsd" placeholder="0.00"></div>
+        </div>
+        <div class="field">
+          <label>Purchase Cost (¥)</label>
+          <div class="iw"><div class="cb y">¥</div><input type="number" id="cost" placeholder="0"></div>
+        </div>
+        <div class="field">
+          <label>Shipping (¥)</label>
+          <div class="iw"><div class="cb y">¥</div><input type="number" id="shipping" placeholder="0"></div>
+          <div class="quick-group">
+            <button class="q-btn" onclick="setShipping(3000)">✈ FedEx<small>¥3k</small></button>
+            <button class="q-btn" onclick="setShipping(5000)">📦 EMS<small>¥5k</small></button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Misc (¥)</label>
+          <div class="iw"><div class="cb y">¥</div><input type="number" id="other" value="0"></div>
+        </div>
+      </div>
+    </div>
+
     <div class="result-box">
       <div class="res-row">
         <span>Sales <span id="salesJpy">¥0</span></span>
@@ -340,6 +314,7 @@
       </div>
       <div id="profit">¥0</div>
       <div class="profit-rate-row">Profit Margin <span id="profitRate">0.0%</span></div>
+      
       <div class="copy-god-row">
         <button onclick="godCopy('title', this)"><span>📝</span>Title</button>
         <button onclick="godCopy('price', this)"><span>💲</span>Price($)</button>
@@ -356,112 +331,28 @@
       <label>Target Profit (¥)</label>
       <div style="display:flex; gap:8px; margin-top:5px;">
         <input type="number" id="targetProfit" value="3000">
-        <button onclick="calcBack()">Calculate</button>
+        <button onclick="calcBack()" style="background:var(--main); color:#fff; border:none; border-radius:8px; padding:0 15px;">Calc</button>
       </div>
     </div>
 
-    <div class="card">
-      <h2>Item Note</h2>
-      <div class="form-grid" style="padding-top:10px;">
-        <div class="field full">
-          <input type="text" id="itemName" placeholder="e.g. Game Console / Anime Figure">
-        </div>
-      </div>
+    <div style="margin-top: 10px; padding-bottom: 40px;">
+      <button class="btn-save" onclick="saveRecord()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+        Save this Record
+      </button>
+      <button class="btn-reset" onclick="resetInputs()">Reset Inputs</button>
     </div>
 
-    <div class="card">
-      <h2>Transaction Details</h2>
-      <div class="form-grid">
-        <div class="field">
-          <label>Exchange Rate</label>
-          <div class="iw"><div class="cb y">¥</div><input type="number" id="rate" value="150" placeholder="150"></div>
-        </div>
-        <div class="field">
-          <label>eBay Fee (%)</label>
-          <div class="iw"><div class="cb p">%</div><input type="number" id="feePercent" value="15" placeholder="15"></div>
-        </div>
-        <div class="field">
-          <label>Sale Price ($)</label>
-          <div class="iw"><div class="cb d">$</div><input type="number" id="saleUsd" placeholder="e.g. 120.00"></div>
-        </div>
-        <div class="field">
-          <label>Purchase Cost (¥)</label>
-          <div class="iw"><div class="cb y">¥</div><input type="number" id="cost" placeholder="e.g. 5,000"></div>
-        </div>
-        <div class="field">
-          <label>Shipping (¥)</label>
-          <div class="iw"><div class="cb y">¥</div><input type="number" id="shipping" placeholder="e.g. 3,000"></div>
-          <div class="quick-group">
-            <button class="q-btn" onclick="setShipping(3000)">✈ FedEx<small>¥3k</small></button>
-            <button class="q-btn" onclick="setShipping(5000)">📦 EMS<small>¥5k</small></button>
-          </div>
-        </div>
-        <div class="field">
-          <label>Misc Expenses (¥)</label>
-          <div class="iw"><div class="cb y">¥</div><input type="number" id="other" value="0"></div>
-        </div>
-      </div>
-    </div>
-
-    <button class="btn-save" onclick="saveRecord()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
-      Save this Record
-    </button>
-    <button class="btn-reset" onclick="resetInputs()">Reset Inputs</button>
   </div>
 
   <div id="reportPage" class="page">
-    <div class="report-grid">
-      <div class="report-main">
-        <div class="report-hero">
-          <h2 style="display:flex; justify-content:space-between; align-items:center;">
-            📈 Monthly Progress
-            <button class="q-btn" style="min-height:unset; padding:4px 10px;" onclick="setGoal()">Set Goal</button>
-          </h2>
-          <div class="goal-meta">
-            <span id="goalText">Goal: ¥100,000</span>
-            <span id="percentText">0%</span>
-          </div>
-          <div class="bar-bg"><div id="goalBar" class="bar-fill"></div></div>
-          <div id="monthTotal" onclick="updateReport('all')">¥0</div>
-          <div style="font-size:9px; text-align:center; color:rgba(255,255,255,0.25); margin-top:-8px;">Tap to show all records</div>
-
-          <button class="btn-share-x" onclick="shareOnX()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-            Xでシェアする
-          </button>
-        </div>
-        
-        <div class="card" style="padding:14px 16px;">
-          <div class="sum-grid">
-            <div class="sum-item" id="filter-plus" onclick="updateReport('plus')">
-              <div style="color:var(--green);">Profitable</div>
-              <b id="plusCount" style="color:var(--green);">0</b>
-            </div>
-            <div class="sum-item" id="filter-minus" onclick="updateReport('minus')">
-              <div style="color:var(--red);">Deficit</div>
-              <b id="minusCount" style="color:var(--red);">0</b>
-            </div>
-          </div>
-        </div>
-        
-        <div id="historyList"></div>
-      </div>
-
-      <div class="report-side">
-        <div class="card" style="padding:14px 16px;">
-          <h2 style="padding: 0 0 10px 0; border-bottom: 1px solid var(--border); margin-bottom: 10px;">
-            👑 Top Performance
-          </h2>
-          <div class="rank-tabs">
-            <div class="rank-tab-mini active" id="rt-profit" onclick="setRankMode('profit')">By Amount</div>
-            <div class="rank-tab-mini" id="rt-rate" onclick="setRankMode('rate')">By Margin</div>
-          </div>
-          <div id="rankingList"></div>
-        </div>
-      </div>
+    <div class="report-hero">
+      <h2>Monthly Profit</h2>
+      <div id="monthTotal">¥0</div>
+      <div class="bar-bg"><div id="goalBar" class="bar-fill"></div></div>
     </div>
-    <button class="btn-reset" style="color:var(--red); width:100%; opacity:0.5;" onclick="clearAllData()">Clear All Data</button>
+    <div id="historyList"></div>
+    <button class="btn-reset" style="color:var(--red); width:100%; opacity:0.5; margin-top:30px;" onclick="clearAllData()">Clear All Data</button>
   </div>
 </div>
 
@@ -470,98 +361,12 @@
   const inputs = {};
   ids.forEach(id => inputs[id] = document.getElementById(id));
 
-  let currentRankMode = 'profit';
-  let currentFilter = 'all'; 
-
-  // --- ICL Function ---
-  const fmt = (val, cur = 'JPY') => {
-    return new Intl.NumberFormat(navigator.language, {
-      style: 'currency',
-      currency: cur,
-      maximumFractionDigits: cur === 'JPY' ? 0 : 2
-    }).format(val);
-  };
+  const fmt = (val, cur = 'JPY') => new Intl.NumberFormat('ja-JP', { style: 'currency', currency: cur, maximumFractionDigits: cur === 'JPY' ? 0 : 2 }).format(val);
 
   function showToast(msg) {
     const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.style.display = 'block';
+    t.textContent = msg; t.style.display = 'block';
     setTimeout(() => t.style.display = 'none', 2000);
-  }
-
-  function setRankMode(mode) {
-    currentRankMode = mode;
-    document.querySelectorAll('.rank-tab-mini').forEach(t => t.classList.remove('active'));
-    document.getElementById('rt-' + mode).classList.add('active');
-    updateReport(currentFilter);
-  }
-
-  async function fetchExchangeRate() {
-    const dot = document.getElementById('rateDot');
-    const display = document.getElementById('rateDisplay');
-    dot.classList.add('loading');
-    try {
-      const res = await fetch('https://open.er-api.com/v6/latest/USD');
-      const data = await res.json();
-      if(data && data.rates && data.rates.JPY) {
-        const currentRate = Math.floor(data.rates.JPY);
-        inputs.rate.value = currentRate;
-        display.textContent = `${fmt(currentRate)}/$`;
-        calc();
-        showToast(`Rate updated: ${fmt(currentRate)}`);
-      }
-    } catch(e) {
-      display.textContent = `${fmt(inputs.rate.value)}/$ (Manual)`;
-    } finally {
-      dot.classList.remove('loading');
-    }
-  }
-
-  window.onload = () => {
-    inputs.rate.value = localStorage.getItem('cfg_rate') || 150;
-    inputs.feePercent.value = localStorage.getItem('cfg_fee') || 15;
-    calc();
-    updateReport('all');
-    fetchExchangeRate();
-  };
-
-  function godCopy(type, btn) {
-    const title = inputs.itemName.value || '';
-    const price = inputs.saleUsd.value || '';
-    const cost = inputs.cost.value || 0;
-    const profit = document.getElementById('profit').innerText;
-    let textToCopy = '';
-    
-    if (type === 'title') {
-      textToCopy = title;
-      if(!textToCopy) return showToast('Title is empty');
-    } else if (type === 'price') {
-      textToCopy = price;
-      if(!textToCopy) return showToast('Price is empty');
-    } else if (type === 'desc') {
-      if(!title) return showToast('Title is empty');
-      textToCopy = `【${title}】\n\nCondition: Used - Excellent\nThank you for visiting! Please feel free to ask any questions.`;
-    } else if (type === 'memo') {
-      textToCopy = `【${title || 'Untitled'}】\nPrice: ${fmt(price || 0, 'USD')}\nCost: ${fmt(cost)}\nProfit: ${profit}`;
-    }
-
-    navigator.clipboard.writeText(textToCopy).then(() => {
-      const originalHTML = btn.innerHTML;
-      btn.innerHTML = '<span>✔</span>Copied';
-      btn.classList.add('copied');
-      setTimeout(() => {
-        btn.innerHTML = originalHTML;
-        btn.classList.remove('copied');
-      }, 1500);
-    });
-  }
-
-  function switchTab(pId) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.getElementById(pId).classList.add('active');
-    document.getElementById(pId === 'calcPage' ? 'tab-calc' : 'tab-report').classList.add('active');
-    window.scrollTo(0,0);
   }
 
   function calc() {
@@ -572,166 +377,95 @@
     
     document.getElementById('salesJpy').textContent = fmt(sJpy);
     document.getElementById('feeJpy').textContent = fmt(fJpy);
-    
     const pEl = document.getElementById('profit');
     pEl.textContent = fmt(profit);
     pEl.style.color = profit >= 0 ? '#2ecc71' : '#ff6b6b';
-    
     const pRate = sJpy > 0 ? (profit / sJpy) * 100 : 0;
     document.getElementById('profitRate').textContent = pRate.toFixed(1) + '%';
   }
-  
+
   ids.forEach(id => inputs[id].addEventListener('input', calc));
 
   function setShipping(val) { inputs.shipping.value = val; calc(); }
-  function toggleBackCalc() {
-    const p = document.getElementById('backCalcPanel');
-    p.style.display = p.style.display === 'block' ? 'none' : 'block';
-  }
+  function toggleBackCalc() { const p = document.getElementById('backCalcPanel'); p.style.display = p.style.display === 'block' ? 'none' : 'block'; }
 
   function calcBack() {
     const rate = parseFloat(inputs.rate.value) || 150;
     const feeP = parseFloat(inputs.feePercent.value) || 15;
     const costTotal = (parseFloat(inputs.cost.value)||0) + (parseFloat(inputs.shipping.value)||0) + (parseFloat(inputs.other.value)||0);
     const target = parseFloat(document.getElementById('targetProfit').value) || 0;
-    
-    const requiredJpy = (target + costTotal) / (1 - (feeP / 100));
-    const requiredUsd = requiredJpy / rate;
-    
-    inputs.saleUsd.value = requiredUsd.toFixed(2);
+    const resUsd = ((target + costTotal) / (1 - (feeP / 100))) / rate;
+    inputs.saleUsd.value = resUsd.toFixed(2);
     calc();
-    showToast(`Price set to ${fmt(requiredUsd, 'USD')}`);
+    showToast(`Price set to ${fmt(resUsd, 'USD')}`);
   }
 
   function saveRecord() {
-    if(!inputs.saleUsd.value) return showToast('Please enter sale price');
-    const v = (id) => parseFloat(inputs[id].value) || 0;
-    const sJpy = Math.round(v('saleUsd') * v('rate'));
-    const fJpy = Math.round(sJpy * (v('feePercent') / 100));
-    const profitVal = sJpy - (v('cost') + v('shipping') + v('other') + fJpy);
-    
-    const pRate = sJpy > 0 ? (profitVal / sJpy) * 100 : 0;
-
-    const rec = { 
-      id: Date.now(), 
-      name: inputs.itemName.value || 'Untitled', 
-      sale: inputs.saleUsd.value, 
-      profit: profitVal,
-      rate: pRate.toFixed(1)
-    };
-
-    let data = JSON.parse(localStorage.getItem('ebay_pro_data') || '[]');
-    data.unshift(rec);
+    if(!inputs.saleUsd.value) return showToast('Enter price');
+    const data = JSON.parse(localStorage.getItem('ebay_pro_data') || '[]');
+    const profitVal = parseInt(document.getElementById('profit').textContent.replace(/[^0-9-]/g, ''));
+    data.unshift({ id: Date.now(), name: inputs.itemName.value || 'Untitled', sale: inputs.saleUsd.value, profit: profitVal });
     localStorage.setItem('ebay_pro_data', JSON.stringify(data));
-    showToast('Record Saved!');
-    updateReport(currentFilter); 
+    showToast('Saved!');
+    updateReport();
   }
 
-  function updateReport(filter = currentFilter) {
-    currentFilter = filter; 
+  function updateReport() {
     const data = JSON.parse(localStorage.getItem('ebay_pro_data') || '[]');
-    const goal = parseInt(localStorage.getItem('cfg_goal') || 100000);
-    let total = 0, plus = 0, minus = 0;
+    let total = 0;
     const list = document.getElementById('historyList');
     list.innerHTML = '';
-
-    document.getElementById('filter-plus').classList.remove('active-filter');
-    document.getElementById('filter-minus').classList.remove('active-filter');
-    if(currentFilter === 'plus') document.getElementById('filter-plus').classList.add('active-filter');
-    if(currentFilter === 'minus') document.getElementById('filter-minus').classList.add('active-filter');
-
-    const rankList = document.getElementById('rankingList');
-    if (rankList) {
-      rankList.innerHTML = '';
-      const sortedData = [...data].filter(i => i.profit > 0).sort((a,b) => {
-        if (currentRankMode === 'profit') return b.profit - a.profit;
-        return (parseFloat(b.rate) || 0) - (parseFloat(a.rate) || 0);
-      }).slice(0, 5);
-      
-      if(sortedData.length === 0) {
-        rankList.innerHTML = '<div style="text-align:center; font-size:11px; color:var(--ink3); padding:10px 0;">No data yet</div>';
-      } else {
-        sortedData.forEach((item, index) => {
-          rankList.innerHTML += `
-            <div class="rank-item">
-              <div class="rank-badge">${index+1}</div>
-              <div class="rank-info">${item.name}</div>
-              <div class="rank-profit">
-                <b>${currentRankMode === 'profit' ? fmt(item.profit) : item.rate + '%'}</b>
-              </div>
-            </div>
-          `;
-        });
-      }
-    }
-
     data.forEach(item => {
       total += item.profit;
-      if(item.profit >= 0) plus++; else minus++;
-      
-      let shouldShow = false;
-      if(currentFilter === 'all') shouldShow = true;
-      else if(currentFilter === 'plus' && item.profit >= 0) shouldShow = true;
-      else if(currentFilter === 'minus' && item.profit < 0) shouldShow = true;
-
-      if(shouldShow) {
-        const d = document.createElement('div');
-        d.className = 'hist-card';
-        d.innerHTML = `<div><b>${item.name}</b><br><small>${fmt(item.sale, 'USD')}</small></div>
-                       <div style="display:flex;align-items:center;"><b style="color:${item.profit>=0?'var(--green)':'var(--red)'}">${fmt(item.profit)}</b>
-                       <button class="hist-del" onclick="deleteItem(${item.id})">×</button></div>`;
-        list.appendChild(d);
-      }
+      const d = document.createElement('div');
+      d.className = 'hist-card';
+      d.innerHTML = `<div><b>${item.name}</b><br><small>${fmt(item.sale, 'USD')}</small></div>
+                     <b style="color:${item.profit>=0?'#1a9e5c':'#d03a3a'}">${fmt(item.profit)}</b>`;
+      list.appendChild(d);
     });
-
     document.getElementById('monthTotal').textContent = fmt(total);
-    document.getElementById('monthTotal').style.color = total >= 0 ? '#fff' : 'var(--red)';
-    document.getElementById('plusCount').textContent = plus;
-    document.getElementById('minusCount').textContent = minus;
-    document.getElementById('goalText').textContent = `Goal: ${fmt(goal)}`;
-    const p = Math.min(100, Math.max(0, (total/goal)*100));
-    document.getElementById('goalBar').style.width = p + '%';
-    document.getElementById('percentText').textContent = p.toFixed(1) + '%';
+    const goal = 100000;
+    document.getElementById('goalBar').style.width = Math.min(100, (total/goal)*100) + '%';
   }
 
-  function shareOnX() {
-    const totalProfit = document.getElementById('monthTotal').textContent;
-    const text = encodeURIComponent(`今月のeBay利益は ${totalProfit}！ #デルベイ`);
-    const url = `https://twitter.com/intent/tweet?text=${text}`;
-    window.open(url, '_blank');
-  }
-
-  function deleteItem(id) {
-    if(!confirm('Delete this record?')) return;
-    let data = JSON.parse(localStorage.getItem('ebay_pro_data') || '[]');
-    data = data.filter(i => i.id !== id);
-    localStorage.setItem('ebay_pro_data', JSON.stringify(data));
-    updateReport(currentFilter); 
+  function switchTab(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.getElementById(id === 'calcPage' ? 'tab-calc' : 'tab-report').classList.add('active');
   }
 
   function resetInputs() {
-    inputs.saleUsd.value = '';
-    inputs.cost.value = '';
-    inputs.shipping.value = '';
-    inputs.itemName.value = '';
-    calc();
-    showToast('Inputs reset');
+    inputs.saleUsd.value = ''; inputs.cost.value = ''; inputs.shipping.value = ''; inputs.itemName.value = '';
+    calc(); showToast('Reset');
   }
 
-  function setGoal() {
-    const g = prompt("Set monthly profit goal (JPY):", "100000");
-    if(g) {
-      localStorage.setItem('cfg_goal', g);
-      updateReport(currentFilter);
-    }
+  function clearAllData() { if(confirm("Clear all?")) { localStorage.removeItem('ebay_pro_data'); updateReport(); } }
+
+  async function fetchRate() {
+    try {
+      const res = await fetch('https://open.er-api.com/v6/latest/USD');
+      const data = await res.json();
+      if(data.rates.JPY) {
+        inputs.rate.value = Math.floor(data.rates.JPY);
+        document.getElementById('rateDisplay').textContent = `${inputs.rate.value}/$`;
+        calc();
+      }
+    } catch(e) {}
   }
 
-  function clearAllData() {
-    if(confirm("Are you sure you want to delete all saved records?")) {
-      localStorage.removeItem('ebay_pro_data');
-      updateReport('all');
-    }
+  function godCopy(type, btn) {
+    let text = "";
+    if(type==='title') text = inputs.itemName.value;
+    else if(type==='price') text = inputs.saleUsd.value;
+    else if(type==='memo') text = `${inputs.itemName.value}\nProfit: ${document.getElementById('profit').textContent}`;
+    
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('Copied!');
+    });
   }
+
+  window.onload = () => { fetchRate(); updateReport(); };
 </script>
 </body>
 </html>
