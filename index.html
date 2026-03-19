@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>eBay利益で、デルベイ！ Pro</title>
+  <title>eBay利益で、デルベイ！</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -68,12 +68,12 @@
       font-size: 11px; color: rgba(255,255,255,0.55);
       background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
       border-radius: 20px; padding: 4px 10px;
-      display: flex; align-items: center; gap: 5px; flex-shrink: 0; cursor: pointer;
+      display: flex; align-items: center; gap: 5px; flex-shrink: 0;
+      transition: color 0.3s;
     }
     .hd-dot { width: 5px; height: 5px; border-radius: 50%; background: #2ecc71; }
-    .hd-dot.syncing { background: #f1c40f; animation: pulse 1s infinite; }
-
-    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+    .hd-dot.loading { background: #f5a623; animation: blink 1s infinite alternate; }
+    @keyframes blink { from { opacity: 1; } to { opacity: 0.3; } }
 
     /* ── Tabs ── */
     .tabs {
@@ -90,139 +90,109 @@
     }
     .tab.active { color: #fff; border-bottom-color: var(--main); font-weight: 500; }
 
-    /* ── Layout ── */
+    /* ── Layout & Card ── */
     .container { width: 100%; max-width: 500px; margin: 0 auto; padding: 18px 14px 60px; }
     .page { display: none; }
     .page.active { display: block; }
-
-    /* ── Card ── */
-    .card {
-      background: var(--surface); border-radius: var(--r-lg);
-      border: 1px solid var(--border); margin-bottom: 10px; overflow: hidden;
-    }
-    h2 {
-      font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
-      text-transform: uppercase; color: var(--ink3);
-      margin: 0; padding: 13px 18px 0;
-      display: flex; align-items: center; gap: 7px;
-    }
+    .card { background: var(--surface); border-radius: var(--r-lg); border: 1px solid var(--border); margin-bottom: 10px; overflow: hidden; }
+    h2 { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink3); margin: 0; padding: 13px 18px 0; display: flex; align-items: center; gap: 7px; border-left: none !important; }
     h2::before { content: ''; width: 3px; height: 12px; background: var(--main); border-radius: 2px; flex-shrink: 0; }
 
     /* ── Form grid ── */
-    .form-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 13px; padding: 12px 18px 18px;
-    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; padding: 12px 18px 18px; }
     .field { display: flex; flex-direction: column; margin-bottom: 0; }
     .field.full { grid-column: 1 / 3; }
-
-    label {
-      font-size: 9.5px; font-weight: 600; letter-spacing: 0.09em;
-      text-transform: uppercase; color: var(--ink3); margin-bottom: 6px;
-    }
+    label { font-size: 9.5px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink3); margin-bottom: 6px; }
 
     /* ── Input ── */
-    .iw { display: flex; align-items: stretch; position: relative; }
-    .cb {
-      display: flex; align-items: center; justify-content: center;
-      min-width: 36px; padding: 0 10px;
-      font-size: 15px; font-weight: 700;
-      border-radius: var(--r-sm) 0 0 var(--r-sm);
-      border: 1px solid; border-right: none;
-      flex-shrink: 0; letter-spacing: -0.02em;
-    }
+    .iw { display: flex; align-items: stretch; }
+    .cb { display: flex; align-items: center; justify-content: center; min-width: 36px; padding: 0 10px; font-size: 15px; font-weight: 700; border-radius: var(--r-sm) 0 0 var(--r-sm); border: 1px solid; border-right: none; flex-shrink: 0; letter-spacing: -0.02em; }
     .cb.d { background: var(--dollar-bg); border-color: var(--dollar-bd); color: var(--dollar-txt); }
     .cb.y { background: var(--yen-bg);    border-color: var(--yen-bd);    color: var(--yen-txt); }
     .cb.p { background: var(--bg2);       border-color: var(--border);    color: var(--ink3); font-size: 13px; }
-
-    input {
-      padding: 11px 12px;
-      border: 1px solid #e5e5e5; border-radius: var(--r-sm);
-      font-size: 15px; font-family: 'Inter', sans-serif; font-weight: 400;
-      color: var(--ink); background: var(--bg); width: 100%;
-      transition: all 0.15s;
-      -webkit-appearance: none; min-height: 44px;
-    }
+    input { padding: 11px 12px; border: 1px solid #e5e5e5; border-radius: var(--r-sm); font-size: 15px; font-family: 'Inter', sans-serif; font-weight: 400; color: var(--ink); background: var(--bg); width: 100%; transition: border-color 0.15s, box-shadow 0.15s, background 0.15s; -webkit-appearance: none; min-height: 44px; }
     .iw input { border-radius: 0 var(--r-sm) var(--r-sm) 0; border-left: none; flex: 1; }
+    input::placeholder { color: var(--ink3); opacity: 0.5; font-size: 13px; }
     input:focus { border-color: var(--main); background: var(--surface); box-shadow: 0 0 0 3px rgba(192,89,58,0.10); }
-
-    /* ── Copy Button inside Input ── */
-    .btn-copy-inline {
-      position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
-      background: var(--bg2); border: 1px solid var(--border);
-      padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 600;
-      color: var(--ink2); cursor: pointer; transition: all 0.1s;
-    }
-    .btn-copy-inline:active { background: var(--main); color: #fff; }
+    .iw:focus-within .cb { border-color: var(--main); }
+    .iw:focus-within .cb.d { background: #dff2ea; }
+    .iw:focus-within .cb.y { background: var(--main-l); }
+    input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+    input[type=number] { -moz-appearance: textfield; }
 
     /* ── Quick buttons ── */
     .quick-group { display: flex; gap: 7px; margin-top: 8px; }
-    .q-btn {
-      flex: 1; background: var(--bg2); border: 1px solid var(--border);
-      padding: 10px 4px; border-radius: var(--r-sm);
-      font-size: 11.5px; font-weight: 600; color: var(--ink2);
-      cursor: pointer; font-family: 'Inter', sans-serif;
-      transition: all 0.15s; min-height: 44px; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 2px;
-    }
-    .q-btn:hover { background: var(--main-l); border-color: rgba(192,89,58,0.35); }
+    .q-btn { flex: 1; background: var(--bg2); border: 1px solid var(--border); padding: 10px 4px; border-radius: var(--r-sm); font-size: 11.5px; font-weight: 600; color: var(--ink2); cursor: pointer; font-family: 'Inter', sans-serif; line-height: 1.3; transition: background 0.15s, color 0.15s, border-color 0.15s; min-height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+    .q-btn:hover  { background: var(--main-l); border-color: rgba(192,89,58,0.35); color: var(--main-h); }
+    .q-btn:active { transform: scale(0.97); }
+    .q-btn small  { font-size: 9px; font-weight: 400; opacity: 0.6; }
 
     /* ── Back-calc ── */
-    .btn-toggle {
-      display: flex; align-items: center; justify-content: center; gap: 6px;
-      width: calc(100% - 36px); margin: 0 18px 14px;
-      padding: 11px; background: var(--bg2);
-      border: 1px dashed var(--border); border-radius: var(--r-sm);
-      font-size: 12px; font-weight: 500; color: var(--ink2);
-      cursor: pointer; transition: all 0.15s; min-height: 44px;
-    }
-    #backCalcPanel { display: none; background: var(--main-l); padding: 15px 18px; border-top: 1px solid rgba(0,0,0,0.05); }
+    .btn-toggle { display: flex; align-items: center; justify-content: center; gap: 6px; width: calc(100% - 36px); margin: 0 18px 14px; padding: 11px; background: var(--bg2); border: 1px dashed var(--border); border-radius: var(--r-sm); font-size: 12px; font-weight: 500; color: var(--ink2); cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s; min-height: 44px; }
+    .btn-toggle:hover { background: var(--main-l); border-color: var(--main); color: var(--main-h); }
+    #backCalcPanel { display: none; background: var(--main-l); border: 1px solid rgba(192,89,58,0.20); padding: 15px 18px; border-top: none; }
+    #backCalcPanel label { color: var(--main-h); }
+    #backCalcPanel > div { display: flex; gap: 8px; margin-top: 7px; }
+    #backCalcPanel input { flex: 1; min-height: 44px; }
+    #backCalcPanel button { background: var(--main); color: #fff; border: none; border-radius: var(--r-sm); padding: 0 18px; font-size: 13px; font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; white-space: nowrap; min-height: 44px; transition: background 0.15s; }
+    #backCalcPanel button:hover { background: var(--main-h); }
 
-    /* ── Result box ── */
-    .result-box {
-      background: var(--ink); color: #fff;
-      border-radius: var(--r-lg); padding: 20px 20px 18px;
-      text-align: center; margin-top: 4px; position: relative; overflow: hidden;
-      transition: background 0.4s ease;
-    }
-    .result-box.is-red { background: #4a1515; }
-    .result-box.is-green { background: #0f2e1e; }
-
-    .res-row { display: flex; justify-content: space-between; font-size: 10.5px; color: rgba(255,255,255,0.4); margin-bottom: 6px; }
-    #profit { font-size: 52px; font-weight: 300; letter-spacing: -0.05em; line-height: 1; margin: 4px 0 6px; }
-    .profit-rate-row { font-size: 11.5px; color: rgba(255,255,255,0.4); }
+    /* ── Result box & Copy Buttons ── */
+    .result-box { background: var(--ink); color: #fff; border-radius: var(--r-lg); padding: 20px 20px 18px; text-align: center; margin-top: 4px; position: relative; overflow: hidden; }
+    .result-box::after { content: ''; position: absolute; top: -60px; right: -60px; width: 180px; height: 180px; border-radius: 50%; background: radial-gradient(circle, rgba(192,89,58,0.18) 0%, transparent 70%); pointer-events: none; }
+    .res-row { display: flex; justify-content: space-between; font-size: 10.5px; font-weight: 300; color: rgba(255,255,255,0.38); margin-bottom: 6px; }
+    #profit { font-size: 56px; font-weight: 300; letter-spacing: -0.05em; line-height: 1; margin: 4px 0 6px; transition: color 0.3s; }
+    .profit-rate-row { font-size: 11.5px; color: rgba(255,255,255,0.35); letter-spacing: 0.03em; }
+    
+    .copy-god-row { display: flex; gap: 8px; margin-top: 18px; position: relative; z-index: 10; }
+    .copy-god-row button { flex: 1; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; border-radius: 8px; padding: 10px 4px; font-size: 11px; font-weight: 500; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-family: 'Inter', sans-serif; }
+    .copy-god-row button span { font-size: 14px; }
+    .copy-god-row button:active { transform: scale(0.95); }
+    .copy-god-row button.copied { background: rgba(46,204,113,0.2); border-color: #2ecc71; color: #2ecc71; }
 
     /* ── Action Buttons ── */
-    .btn-save {
-      width: 100%; padding: 15px; background: var(--main); color: #fff; border: none;
-      border-radius: var(--r-sm); font-weight: 600; font-size: 15px;
-      margin-top: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px;
-      min-height: 52px;
-    }
+    .btn-save { width: 100%; padding: 15px; background: var(--main); color: #fff; border: none; border-radius: var(--r-sm); font-weight: 600; font-size: 15px; font-family: 'Inter', sans-serif; margin-top: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; transition: background 0.15s; min-height: 52px; box-shadow: none; }
+    .btn-save:hover  { background: var(--main-h); }
+    .btn-save:active { background: #8c3c22; transform: scale(0.99); }
+    .btn-reset { width: 100%; background: none; border: none; color: var(--ink3); text-decoration: none; margin-top: 12px; font-size: 11.5px; font-family: 'Inter', sans-serif; cursor: pointer; display: block; text-align: center; opacity: 0.65; transition: opacity 0.15s; }
+    .btn-reset:hover { opacity: 1; color: var(--ink2); }
 
-    /* ── Report ── */
-    .report-hero { background: var(--ink); color: #fff; border-radius: var(--r-lg); padding: 20px; margin-bottom: 10px; text-align: center;}
-    #monthTotal { font-size: 44px; font-weight: 300; margin: 10px 0; }
-    .bar-bg { background: rgba(255,255,255,0.1); height: 10px; border-radius: 6px; overflow: hidden; margin: 10px 0; }
-    .bar-fill { height: 100%; width: 0%; background: var(--main); transition: width 0.6s ease; }
+    /* ── Report Page ── */
+    .report-hero { background: var(--ink); color: #fff; border-radius: var(--r-lg); padding: 20px; margin-bottom: 10px; overflow: hidden; position: relative; }
+    .report-hero::after { content: ''; position: absolute; top: -60px; right: -60px; width: 180px; height: 180px; border-radius: 50%; background: radial-gradient(circle, rgba(192,89,58,0.15) 0%, transparent 70%); pointer-events: none; }
+    .report-hero h2 { color: rgba(255,255,255,0.35) !important; padding: 0 0 3px; justify-content: space-between; width: 100%; }
+    .report-hero h2::before { background: var(--main); }
+    .report-hero h2 .q-btn { font-size: 10px; padding: 4px 10px; border-radius: 20px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); color: rgba(255,255,255,0.55); min-height: unset; flex-direction: row; font-weight: 500; gap: 0; }
+    .report-hero h2 .q-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+    #monthTotal { font-size: 44px; font-weight: 300; letter-spacing: -0.04em; color: #fff; text-align: center; cursor: pointer; margin: 4px 0 12px; }
+    .goal-meta { display: flex; justify-content: space-between; font-size: 10.5px; font-weight: 300; color: rgba(255,255,255,0.35); margin-bottom: 8px; }
+    .bar-bg { background: rgba(255,255,255,0.10); height: 10px; border-radius: 6px; overflow: hidden; margin: 0; }
+    .bar-fill { height: 100%; width: 0%; border-radius: 6px; background: linear-gradient(90deg, #e8593c 0%, #f5a623 60%, #2ecc71 100%); background-size: 200% 100%; background-position: right center; transition: width 0.7s cubic-bezier(0.34,1.4,0.64,1), background-position 0.7s ease; }
+    .sum-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0 0; }
+    .sum-item { background: var(--surface); padding: 14px 12px; border-radius: var(--r); text-align: center; cursor: pointer; border: 1.5px solid var(--border); transition: border-color 0.15s; }
+    .sum-item:hover { border-color: #ccc7be; }
+    .sum-item.active-filter { border-color: var(--main); background: var(--main-l); }
+    .sum-item div { font-size: 9px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; margin-bottom: 5px; }
+    .sum-item b { font-size: 28px; font-weight: 300; display: block; letter-spacing: -0.03em; }
+    .hist-card { background: var(--surface); padding: 12px 14px; border-radius: var(--r-sm); margin-bottom: 6px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 12px; transition: border-color 0.15s; }
+    .hist-card:hover { border-color: #ccc7be; }
+    .hist-card b { font-size: 13px; font-weight: 500; letter-spacing: -0.01em; color: var(--ink); }
+    .hist-card small { color: var(--ink3); font-size: 10.5px; }
+    .hist-del { color: var(--red); background: none; border: none; font-size: 18px; padding: 4px 7px; cursor: pointer; border-radius: var(--r-xs); transition: background 0.15s; }
+    .hist-del:hover { background: var(--red-l); }
+    #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--ink); color: rgba(255,255,255,0.9); padding: 10px 20px; border-radius: 20px; font-size: 12px; font-family: 'Inter', sans-serif; display: none; z-index: 1000; white-space: nowrap; box-shadow: 0 6px 24px rgba(0,0,0,0.25); }
 
-    .sum-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0; }
-    .sum-item { background: var(--surface); padding: 14px; border-radius: var(--r); border: 1.5px solid var(--border); text-align: center; }
-    .sum-item b { font-size: 24px; display: block; }
-
-    /* ── History ── */
-    .hist-card {
-      background: var(--surface); padding: 12px 14px; border-radius: var(--r-sm);
-      margin-bottom: 6px; border: 1px solid var(--border); display: flex;
-      justify-content: space-between; align-items: center;
-    }
-    .hist-del { color: var(--red); background: none; border: none; font-size: 20px; cursor: pointer; }
-
-    #toast {
-      position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-      background: rgba(0,0,0,0.85); color: #fff; padding: 10px 20px;
-      border-radius: 30px; font-size: 12px; display: none; z-index: 1000;
-    }
+    /* 🔥 追加：ランキング用CSS */
+    .rank-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed var(--border); }
+    .rank-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .rank-badge { width: 22px; height: 22px; border-radius: 50%; background: var(--bg2); color: var(--ink3); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; margin-right: 10px; flex-shrink: 0; }
+    .rank-1 { background: #fff5e5; color: #f5a623; border: 1px solid #fce8c7; box-shadow: 0 2px 4px rgba(245,166,35,0.15); } /* 金 */
+    .rank-2 { background: #f2f4f5; color: #7f8c8d; border: 1px solid #e0e4e5; } /* 銀 */
+    .rank-3 { background: #fdf6f2; color: #d35400; border: 1px solid #fae5d3; } /* 銅 */
+    .rank-info { flex: 1; font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-right: 10px; color: var(--ink); }
+    .rank-profit { font-size: 14px; font-weight: 600; color: var(--green); flex-shrink: 0; }
+    
+    @media (max-width: 360px) { #profit { font-size: 44px; } #monthTotal{ font-size: 36px; } }
   </style>
 </head>
 <body>
@@ -235,17 +205,14 @@
   </div>
   <div class="hd-text">
     <div class="hd-name">eBay利益で、<span>デルベイ！</span></div>
-    <div class="hd-sub">eBay輸出 利益計算・効率化</div>
+    <div class="hd-sub">eBay輸出 利益計算ツール</div>
   </div>
-  <div class="hd-rate" id="syncRateBtn" onclick="fetchRate()">
-    <div class="hd-dot" id="rateDot"></div>
-    <span id="rateDisplay">¥---/$</span>
-  </div>
+  <div class="hd-rate" id="rateBadge"><div class="hd-dot" id="rateDot"></div><span id="rateDisplay">読込中...</span></div>
 </div>
 
 <div class="tabs">
-  <div class="tab active" id="tab-calc" onclick="switchTab('calcPage')">利益計算</div>
-  <div class="tab" id="tab-report" onclick="switchTab('reportPage')">レポート</div>
+  <div class="tab active" id="tab-calc"   onclick="switchTab('calcPage')">利益計算</div>
+  <div class="tab"        id="tab-report" onclick="switchTab('reportPage')">集計レポート</div>
 </div>
 
 <div class="container">
@@ -253,19 +220,10 @@
   <div id="calcPage" class="page active">
 
     <div class="card">
-      <h2>商品情報（時短コピー）</h2>
+      <h2>商品メモ</h2>
       <div class="form-grid" style="padding-top:10px;">
         <div class="field full">
-          <label>商品タイトル</label>
-          <div class="iw">
-            <input type="text" id="itemName" placeholder="例: Nintendo Switch OLED Japan">
-            <button class="btn-copy-inline" onclick="copyText('itemName')">COPY</button>
-          </div>
-        </div>
-        <div class="field full">
-            <button class="q-btn" onclick="generateTemplate()" style="flex-direction: row; gap: 8px;">
-                <span>✨ 定型文を一括コピー</span>
-            </button>
+          <input type="text" id="itemName" placeholder="例: Game Console / Anime Figure / Vintage Camera">
         </div>
       </div>
     </div>
@@ -273,104 +231,120 @@
     <div class="card">
       <h2>取引情報を入力</h2>
       <div class="form-grid">
+
         <div class="field">
           <label>為替レート</label>
-          <div class="iw">
-            <div class="cb y">¥</div>
-            <input type="number" id="rate" value="150">
-          </div>
+          <div class="iw"><div class="cb y">¥</div><input type="number" id="rate" value="150" placeholder="150"></div>
         </div>
+
         <div class="field">
           <label>eBay手数料</label>
-          <div class="iw">
-            <div class="cb p">%</div>
-            <input type="number" id="feePercent" value="15">
-          </div>
+          <div class="iw"><div class="cb p">%</div><input type="number" id="feePercent" value="15" placeholder="15"></div>
         </div>
+
         <div class="field">
           <label>売値 ($)</label>
-          <div class="iw">
-            <div class="cb d">$</div>
-            <input type="number" id="saleUsd" placeholder="0.00">
-            <button class="btn-copy-inline" onclick="copyText('saleUsd', '$')">COPY</button>
-          </div>
+          <div class="iw"><div class="cb d">$</div><input type="number" id="saleUsd" placeholder="例: 120.00"></div>
         </div>
+
         <div class="field">
           <label>仕入れ (￥)</label>
-          <div class="iw">
-            <div class="cb y">¥</div>
-            <input type="number" id="cost" placeholder="0">
-          </div>
+          <div class="iw"><div class="cb y">¥</div><input type="number" id="cost" placeholder="例: 5,000"></div>
         </div>
+
         <div class="field">
           <label>国際送料 (￥)</label>
-          <div class="iw">
-            <div class="cb y">¥</div>
-            <input type="number" id="shipping" placeholder="0">
-          </div>
+          <div class="iw"><div class="cb y">¥</div><input type="number" id="shipping" placeholder="例: 3,000"></div>
           <div class="quick-group">
-            <button class="q-btn" onclick="setShipping(3000)">✈3,000</button>
-            <button class="q-btn" onclick="setShipping(5000)">📦5,000</button>
+            <button class="q-btn" onclick="setShipping(3000)">✈ FedEx<small>¥3,000</small></button>
+            <button class="q-btn" onclick="setShipping(5000)">📦 EMS<small>¥5,000</small></button>
           </div>
         </div>
+
         <div class="field">
-          <label>経費 (￥)</label>
-          <div class="iw">
-            <div class="cb y">¥</div>
-            <input type="number" id="other" value="0">
-          </div>
+          <label>経費・雑費 (￥)</label>
+          <div class="iw"><div class="cb y">¥</div><input type="number" id="other" value="0" placeholder="例: 500"></div>
         </div>
+
       </div>
 
       <button class="btn-toggle" onclick="toggleBackCalc()">
-        逆算：目標利益から売値を出す
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a6 6 0 010 12h-1"/></svg>
+        【逆算】いくらで売ればいい？
       </button>
       <div id="backCalcPanel">
-        <label>目標純利益 (円)</label>
+        <label>目標の純利益 (円)</label>
         <div style="display:flex; gap:8px; margin-top:5px;">
-          <input type="number" id="targetProfit" value="3000">
-          <button onclick="calcBack()" style="background:var(--main); color:#fff; border:none; border-radius:8px; padding:0 15px;">計算</button>
+          <input type="number" id="targetProfit" value="3000" style="flex:1;">
+          <button onclick="calcBack()">売値を計算</button>
         </div>
       </div>
+
     </div>
 
-    <div id="resultBox" class="result-box">
+    <div class="result-box">
       <div class="res-row">
         <span>売上 <span id="salesJpy">¥0</span></span>
         <span>手数料 <span id="feeJpy">¥0</span></span>
       </div>
       <div id="profit">¥0</div>
       <div class="profit-rate-row">利益率 <span id="profitRate">0.0%</span></div>
+
+      <div class="copy-god-row">
+        <button onclick="godCopy('title', this)"><span>📝</span>タイトル</button>
+        <button onclick="godCopy('price', this)"><span>💲</span>価格($)</button>
+        <button onclick="godCopy('desc', this)"><span>✨</span>テンプレ</button>
+        <button onclick="godCopy('memo', this)"><span>📊</span>利益メモ</button>
+      </div>
     </div>
 
     <button class="btn-save" onclick="saveRecord()">
-      この取引を記録する
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+      この利益を記録する
     </button>
-    <button class="btn-reset" onclick="resetInputs()" style="width:100%; background:none; border:none; color:var(--ink3); margin-top:10px; cursor:pointer;">リセット</button>
+    <button class="btn-reset" onclick="resetInputs()">入力をリセット</button>
 
   </div>
 
   <div id="reportPage" class="page">
     <div class="report-hero">
-      <div style="font-size:12px; opacity:0.6;">今月の合計利益</div>
-      <div id="monthTotal">¥0</div>
+      <h2 style="display:flex; justify-content:space-between; align-items:center; padding:0 0 4px;">
+        📈 今月の進捗
+        <button class="q-btn" style="padding:4px 10px;" onclick="setGoal()">目標設定</button>
+      </h2>
+      <div class="goal-meta">
+        <span id="goalText">目標: ¥100,000</span>
+        <span id="percentText">0%</span>
+      </div>
       <div class="bar-bg"><div id="goalBar" class="bar-fill"></div></div>
-      <button class="q-btn" style="background:rgba(255,255,255,0.1); color:#fff; border:none; min-height:30px; margin-top:5px;" onclick="setGoal()">目標設定</button>
+      <div id="monthTotal" onclick="updateReport('all')">¥0</div>
+      <div style="font-size:9px; text-align:center; color:rgba(255,255,255,0.25); margin-top:-8px;">タップで全件表示</div>
     </div>
 
-    <div class="sum-grid">
-      <div class="sum-item">
-        <div style="font-size:10px; color:var(--green);">黒字</div>
-        <b id="plusCount" style="color:var(--green);">0</b>
+    <div class="card" style="padding:14px 16px;">
+      <div class="sum-grid">
+        <div class="sum-item" id="filter-plus" onclick="updateReport('plus')">
+          <div style="color:var(--green);">黒字件数</div>
+          <b id="plusCount" style="color:var(--green);">0</b>
+        </div>
+        <div class="sum-item" id="filter-minus" onclick="updateReport('minus')">
+          <div style="color:var(--red);">赤字件数</div>
+          <b id="minusCount" style="color:var(--red);">0</b>
+        </div>
       </div>
-      <div class="sum-item">
-        <div style="font-size:10px; color:var(--red);">赤字</div>
-        <b id="minusCount" style="color:var(--red);">0</b>
-      </div>
+    </div>
+
+    <div class="card" style="padding:14px 16px;">
+      <h2 style="padding: 0 0 10px 0; display:flex; justify-content:space-between; border-bottom: 1px solid var(--border); margin-bottom: 10px;">
+        👑 利益ランキング
+        <span style="font-size:9px; color:var(--ink3); font-weight:normal; text-transform:none;">上位5件を表示</span>
+      </h2>
+      <div id="rankingList"></div>
     </div>
 
     <div id="historyList"></div>
-    <button onclick="clearAllData()" style="width:100%; color:var(--red); border:none; background:none; margin-top:20px; font-size:11px; opacity:0.5;">全データ削除</button>
+
+    <button class="btn-reset" style="color:var(--red); width:100%; opacity:0.5;" onclick="clearAllData()">データを全削除</button>
   </div>
 
 </div>
@@ -380,31 +354,69 @@
   const inputs = {};
   ids.forEach(id => inputs[id] = document.getElementById(id));
 
+  // 🔥 為替レート自動取得API（無料・キー不要）
+  async function fetchExchangeRate() {
+    const dot = document.getElementById('rateDot');
+    const display = document.getElementById('rateDisplay');
+    dot.classList.add('loading');
+    
+    try {
+      const res = await fetch('https://open.er-api.com/v6/latest/USD');
+      const data = await res.json();
+      if(data && data.rates && data.rates.JPY) {
+        const currentRate = Math.floor(data.rates.JPY);
+        inputs.rate.value = currentRate;
+        display.textContent = `¥${currentRate}/$`;
+        calc();
+        showToast(`最新の為替レート(¥${currentRate})を取得しました`);
+      }
+    } catch(e) {
+      console.log('レート取得失敗', e);
+      display.textContent = `¥${inputs.rate.value}/$ (手動)`;
+    } finally {
+      dot.classList.remove('loading');
+    }
+  }
+
   window.onload = () => {
     inputs.rate.value = localStorage.getItem('cfg_rate') || 150;
     inputs.feePercent.value = localStorage.getItem('cfg_fee') || 15;
-    fetchRate(); // 起動時に自動取得
+    calc();
     updateReport();
+    fetchExchangeRate(); // 起動時にレート取得を実行
   };
 
-  // --- 為替レート自動取得 (無料API使用) ---
-  async function fetchRate() {
-    const dot = document.getElementById('rateDot');
-    dot.classList.add('syncing');
-    try {
-      // 実際はAPIキーが必要な場合が多いですが、デモとして一般公開APIを参照
-      const res = await fetch('https://open.er-api.com/v6/latest/USD');
-      const data = await res.json();
-      const jpyRate = Math.round(data.rates.JPY * 100) / 100;
-      inputs.rate.value = jpyRate;
-      document.getElementById('rateDisplay').textContent = `¥${jpyRate}/$`;
-      showToast(`最新レート ¥${jpyRate} を取得しました`);
-      calc();
-    } catch (e) {
-      showToast("レート取得に失敗しました");
-    } finally {
-      dot.classList.remove('syncing');
+  // ワンタップコピー
+  function godCopy(type, btn) {
+    const title = inputs.itemName.value || '';
+    const price = inputs.saleUsd.value || '';
+    const cost = inputs.cost.value || 0;
+    const profit = document.getElementById('profit').innerText;
+
+    let textToCopy = '';
+    
+    if (type === 'title') {
+      textToCopy = title;
+      if(!textToCopy) return showToast('タイトルが未入力です');
+    } else if (type === 'price') {
+      textToCopy = price;
+      if(!textToCopy) return showToast('売値が未入力です');
+    } else if (type === 'desc') {
+      if(!title) return showToast('タイトルが未入力です');
+      textToCopy = `【${title}】\n\nCondition: Used - Excellent\nThank you for visiting! Please feel free to ask any questions.`;
+    } else if (type === 'memo') {
+      textToCopy = `【${title || '無題'}】\n売値: $${price || 0}\n仕入: ¥${cost}\n利益: ${profit}`;
     }
+
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      const originalHTML = btn.innerHTML;
+      btn.innerHTML = '<span>✔</span>コピー済';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.innerHTML = originalHTML;
+        btn.classList.remove('copied');
+      }, 1500);
+    });
   }
 
   function switchTab(pId) {
@@ -412,132 +424,145 @@
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.getElementById(pId).classList.add('active');
     document.getElementById(pId === 'calcPage' ? 'tab-calc' : 'tab-report').classList.add('active');
-    if(pId === 'reportPage') updateReport();
   }
 
   function calc() {
-    const val = (id) => parseFloat(inputs[id].value) || 0;
-    localStorage.setItem('cfg_rate', inputs.rate.value);
-    localStorage.setItem('cfg_fee', inputs.feePercent.value);
-
-    const sJpy = Math.round(val('saleUsd') * val('rate'));
-    const fJpy = Math.round(sJpy * (val('feePercent') / 100));
-    const profit = sJpy - (val('cost') + val('shipping') + val('other') + fJpy);
-    const pRate = sJpy > 0 ? (profit / sJpy) * 100 : 0;
-
-    document.getElementById('salesJpy').textContent = '¥' + sJpy.toLocaleString();
-    document.getElementById('feeJpy').textContent = '¥' + fJpy.toLocaleString();
+    const v = (id) => parseFloat(inputs[id].value) || 0;
+    const sJpy = Math.round(v('saleUsd') * v('rate'));
+    const fJpy = Math.round(sJpy * (v('feePercent') / 100));
+    const profit = sJpy - (v('cost') + v('shipping') + v('other') + fJpy);
+    
+    document.getElementById('salesJpy').textContent = `¥${sJpy.toLocaleString()}`;
+    document.getElementById('feeJpy').textContent = `¥${fJpy.toLocaleString()}`;
     
     const pEl = document.getElementById('profit');
-    const box = document.getElementById('resultBox');
-    
     pEl.textContent = (profit >= 0 ? '¥' : '-¥') + Math.abs(profit).toLocaleString();
+    pEl.style.color = profit >= 0 ? '#2ecc71' : '#ff6b6b';
     
-    // 赤字・黒字の視覚化（背景色も変更）
-    if(profit >= 0) {
-        pEl.style.color = '#2ecc71';
-        box.classList.remove('is-red');
-        box.classList.add('is-green');
-    } else {
-        pEl.style.color = '#ff6b6b';
-        box.classList.remove('is-green');
-        box.classList.add('is-red');
-    }
-    
+    const pRate = sJpy > 0 ? (profit / sJpy) * 100 : 0;
     document.getElementById('profitRate').textContent = pRate.toFixed(1) + '%';
   }
+  
   ids.forEach(id => inputs[id].addEventListener('input', calc));
+  inputs.rate.addEventListener('change', (e) => {
+    document.getElementById('rateDisplay').textContent = `¥${e.target.value}/$ (手動)`;
+    localStorage.setItem('cfg_rate', e.target.value);
+  });
+  inputs.feePercent.addEventListener('change', (e) => localStorage.setItem('cfg_fee', e.target.value));
 
-  // --- コピー機能 ---
-  function copyText(id, prefix = '') {
-    const val = document.getElementById(id).value;
-    if(!val) return showToast("コピーする内容がありません");
-    navigator.clipboard.writeText(prefix + val);
-    showToast("コピーしました！");
-  }
-
-  function generateTemplate() {
-    const name = inputs.itemName.value || "Item Name";
-    const price = inputs.saleUsd.value || "0.00";
-    const text = `Title: ${name}\nPrice: $${price}\nCondition: Excellent\nShipping: Worldwide`;
-    navigator.clipboard.writeText(text);
-    showToast("定型文をコピーしました");
-  }
-
-  function setShipping(v) { inputs.shipping.value = v; calc(); }
-  function toggleBackCalc() { 
+  function setShipping(val) { inputs.shipping.value = val; calc(); }
+  
+  function toggleBackCalc() {
     const p = document.getElementById('backCalcPanel');
     p.style.display = p.style.display === 'block' ? 'none' : 'block';
   }
 
   function calcBack() {
+    const rate = parseFloat(inputs.rate.value) || 150;
+    const feeP = parseFloat(inputs.feePercent.value) || 15;
+    const costTotal = (parseFloat(inputs.cost.value)||0) + (parseFloat(inputs.shipping.value)||0) + (parseFloat(inputs.other.value)||0);
     const target = parseFloat(document.getElementById('targetProfit').value) || 0;
-    const rate = parseFloat(inputs.rate.value);
-    const fee = parseFloat(inputs.feePercent.value) / 100;
-    const res = (target + (parseFloat(inputs.cost.value)||0) + (parseFloat(inputs.shipping.value)||0) + (parseFloat(inputs.other.value)||0)) / (rate * (1 - fee));
-    inputs.saleUsd.value = Math.ceil(res);
+    
+    const requiredJpy = (target + costTotal) / (1 - (feeP / 100));
+    const requiredUsd = requiredJpy / rate;
+    
+    inputs.saleUsd.value = requiredUsd.toFixed(2);
     calc();
-    showToast('売値をセットしました');
+    showToast(`目標達成のため、$${requiredUsd.toFixed(2)} に設定しました`);
   }
 
   function saveRecord() {
     if(!inputs.saleUsd.value) return showToast('売値を入力してください');
-    const profitText = document.getElementById('profit').textContent.replace(/[¥,]/g, '');
-    const profit = parseInt(profitText.replace('+', '').replace('-', '')) * (profitText.includes('-') ? -1 : 1);
-    const record = { id: Date.now(), name: inputs.itemName.value || '無題', sale: inputs.saleUsd.value, profit: profit };
+    const pStr = document.getElementById('profit').textContent.replace(/[¥,]/g,'');
+    const rec = { id:Date.now(), name:inputs.itemName.value || '無題', sale:inputs.saleUsd.value, profit:parseInt(pStr) };
     let data = JSON.parse(localStorage.getItem('ebay_pro_data') || '[]');
-    data.unshift(record);
+    data.unshift(rec);
     localStorage.setItem('ebay_pro_data', JSON.stringify(data));
     showToast('記録を保存しました！');
+    updateReport();
   }
 
-  function updateReport() {
+  function updateReport(filter = 'all') {
     const data = JSON.parse(localStorage.getItem('ebay_pro_data') || '[]');
     const goal = parseInt(localStorage.getItem('cfg_goal') || 100000);
-    let mSum = 0, pCount = 0, mCount = 0;
-    const listEl = document.getElementById('historyList');
-    listEl.innerHTML = '';
+    let total = 0, plus = 0, minus = 0;
+    const list = document.getElementById('historyList');
+    list.innerHTML = '';
 
+    // 🔥 ランキング描画処理
+    const rankList = document.getElementById('rankingList');
+    rankList.innerHTML = '';
+    const sortedData = [...data].filter(i => i.profit > 0).sort((a,b) => b.profit - a.profit).slice(0, 5);
+    
+    if(sortedData.length === 0) {
+      rankList.innerHTML = '<div style="text-align:center; font-size:11px; color:var(--ink3); padding:10px 0;">まだ黒字データがありません</div>';
+    } else {
+      sortedData.forEach((item, index) => {
+        const rClass = index < 3 ? `rank-${index+1}` : '';
+        rankList.innerHTML += `
+          <div class="rank-item">
+            <div class="rank-badge ${rClass}">${index+1}</div>
+            <div class="rank-info">${item.name}</div>
+            <div class="rank-profit">¥${item.profit.toLocaleString()}</div>
+          </div>
+        `;
+      });
+    }
+
+    // 履歴リスト描画処理
     data.forEach(item => {
-      mSum += item.profit;
-      if(item.profit >= 0) pCount++; else mCount++;
-      const div = document.createElement('div');
-      div.className = 'hist-card';
-      div.innerHTML = `<div><b>${item.name}</b><br><small>$${item.sale}</small></div>
-                       <div style="display:flex;align-items:center;"><b style="color:${item.profit>=0?'var(--green)':'var(--red)'}">¥${item.profit.toLocaleString()}</b>
-                       <button class="hist-del" onclick="deleteItem(${item.id})">×</button></div>`;
-      listEl.appendChild(div);
+      total += item.profit;
+      if(item.profit >= 0) plus++; else minus++;
+      
+      if(filter === 'plus' && item.profit < 0) return;
+      if(filter === 'minus' && item.profit >= 0) return;
+
+      const d = document.createElement('div');
+      d.className = 'hist-card';
+      d.innerHTML = `<div><b>${item.name}</b><br><small>$${item.sale}</small></div>
+                     <div style="display:flex;align-items:center;"><b style="color:${item.profit>=0?'var(--green)':'var(--red)'}">¥${item.profit.toLocaleString()}</b>
+                     <button class="hist-del" onclick="deleteItem(${item.id})">×</button></div>`;
+      list.appendChild(d);
     });
-    document.getElementById('monthTotal').textContent = '¥' + mSum.toLocaleString();
-    document.getElementById('plusCount').textContent = pCount;
-    document.getElementById('minusCount').textContent = mCount;
-    const per = Math.min(100, Math.max(0, Math.round((mSum / goal) * 100)));
-    document.getElementById('goalBar').style.width = per + '%';
+
+    document.getElementById('monthTotal').textContent = '¥' + total.toLocaleString();
+    document.getElementById('plusCount').textContent = plus;
+    document.getElementById('minusCount').textContent = minus;
+    document.getElementById('goalText').textContent = `目標: ¥${goal.toLocaleString()}`;
+    const p = Math.min(100, Math.max(0, (total/goal)*100));
+    document.getElementById('goalBar').style.width = p + '%';
+    document.getElementById('percentText').textContent = p.toFixed(1) + '%';
   }
 
   function deleteItem(id) {
     let data = JSON.parse(localStorage.getItem('ebay_pro_data') || '[]');
-    data = data.filter(i => i.id !== id);
-    localStorage.setItem('ebay_pro_data', JSON.stringify(data));
+    localStorage.setItem('ebay_pro_data', JSON.stringify(data.filter(i => i.id !== id)));
     updateReport();
   }
 
+  function resetInputs() {
+    ['itemName', 'saleUsd', 'cost', 'shipping', 'other'].forEach(id => inputs[id].value = '');
+    inputs.other.value = 0;
+    calc();
+    showToast('リセットしました');
+  }
+
+  function showToast(m) {
+    const t = document.getElementById('toast');
+    t.textContent = m; t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 1800);
+  }
+
   function setGoal() {
-    const g = prompt('目標月利を入力', '100000');
+    const g = prompt('目標月利を入力してください', '100000');
     if(g) { localStorage.setItem('cfg_goal', g); updateReport(); }
   }
 
-  function resetInputs() {
-    ['itemName', 'saleUsd', 'cost', 'shipping', 'other'].forEach(id => inputs[id].value = (id==='other' ? 0 : ''));
-    calc();
-  }
-
-  function clearAllData() { if(confirm('全データを削除しますか？')) { localStorage.removeItem('ebay_pro_data'); updateReport(); } }
-
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg; t.style.display = 'block';
-    setTimeout(() => t.style.display = 'none', 2000);
+  function clearAllData() {
+    if(confirm('全ての取引記録を削除しますか？')) {
+      localStorage.removeItem('ebay_pro_data');
+      updateReport();
+    }
   }
 </script>
 </body>
