@@ -92,7 +92,7 @@
       text-align: center;
       position: relative;
       z-index: 10;
-      max-width: 872px; margin: 20px auto 14px;
+      width: 100%; margin: 10px auto 14px;
       box-shadow: 0 8px 30px rgba(0,0,0,0.2);
       overflow: hidden;
     }
@@ -106,21 +106,21 @@
     /* ── Layout ── */
     .container { 
       width: 100%; 
-      max-width: 900px; 
+      max-width: 1000px; 
       margin: 0 auto; 
       padding: 115px 14px 60px;
     }
     .page { display: none; }
     .page.active { display: block; }
 
-    /* Main App Layout */
+    /* Main App Grid Layout */
     .app-grid {
       display: flex;
       flex-direction: column;
       gap: 14px;
     }
 
-    @media (min-width: 800px) {
+    @media (min-width: 801px) {
       .app-grid {
         display: grid;
         grid-template-columns: 1fr 320px;
@@ -570,21 +570,15 @@
 
   function calc() {
     const v = (id) => parseFloat(inputs[id].value) || 0;
-    
-    // Save current fee percent for persistence
     localStorage.setItem('cfg_fee_usd', inputs.feePercent.value);
-    
     const sUsd = v('saleUsd');
     const fUsd = sUsd * (v('feePercent') / 100);
     const profit = sUsd - (v('cost') + v('shipping') + v('other') + fUsd);
-    
     document.getElementById('salesUsd').textContent = fmt(sUsd);
     document.getElementById('feeUsd').textContent = fmt(fUsd);
-    
     const pEl = document.getElementById('profit');
     const statusEl = document.getElementById('profitStatus');
     pEl.textContent = fmt(profit);
-    
     if (profit > 0) {
       pEl.style.color = '#2ecc71';
       statusEl.textContent = 'Profitable';
@@ -598,7 +592,6 @@
       statusEl.textContent = 'Break-even';
       statusEl.style.color = 'rgba(255,255,255,0.5)';
     }
-    
     const pRate = sUsd > 0 ? (profit / sUsd) * 100 : 0;
     document.getElementById('profitRate').textContent = pRate.toFixed(1) + '%';
   }
@@ -615,9 +608,7 @@
     const feeP = parseFloat(inputs.feePercent.value) || 15;
     const costTotal = (parseFloat(inputs.cost.value)||0) + (parseFloat(inputs.shipping.value)||0) + (parseFloat(inputs.other.value)||0);
     const target = parseFloat(document.getElementById('targetProfit').value) || 0;
-    
     const requiredUsd = (target + costTotal) / (1 - (feeP / 100));
-    
     inputs.saleUsd.value = requiredUsd.toFixed(2);
     calc();
     showToast(`Target price: ${fmt(requiredUsd)}`);
@@ -625,22 +616,12 @@
 
   function saveRecord() {
     if(!inputs.saleUsd.value) return showToast('Sale price required');
-    if(!inputs.cost.value) showToast('Warning: Item cost is 0');
-
     const v = (id) => parseFloat(inputs[id].value) || 0;
     const sUsd = v('saleUsd');
     const fUsd = sUsd * (v('feePercent') / 100);
     const profitVal = sUsd - (v('cost') + v('shipping') + v('other') + fUsd);
     const pRate = sUsd > 0 ? (profitVal / sUsd) * 100 : 0;
-
-    const rec = { 
-      id: Date.now(), 
-      name: inputs.itemName.value || 'Unnamed Record', 
-      sale: inputs.saleUsd.value, 
-      profit: profitVal,
-      rate: pRate.toFixed(1)
-    };
-
+    const rec = { id: Date.now(), name: inputs.itemName.value || 'Unnamed Record', sale: inputs.saleUsd.value, profit: profitVal, rate: pRate.toFixed(1) };
     let data = JSON.parse(localStorage.getItem('ebay_pro_data_usd') || '[]');
     data.unshift(rec);
     localStorage.setItem('ebay_pro_data_usd', JSON.stringify(data));
@@ -655,12 +636,10 @@
     let total = 0, plus = 0, minus = 0;
     const list = document.getElementById('historyList');
     list.innerHTML = '';
-
     document.getElementById('filter-plus').classList.remove('active-filter');
     document.getElementById('filter-minus').classList.remove('active-filter');
     if(currentFilter === 'plus') document.getElementById('filter-plus').classList.add('active-filter');
     if(currentFilter === 'minus') document.getElementById('filter-minus').classList.add('active-filter');
-
     const rankList = document.getElementById('rankingList');
     if (rankList) {
       rankList.innerHTML = '';
@@ -668,43 +647,25 @@
         if (currentRankMode === 'profit') return b.profit - a.profit;
         return (parseFloat(b.rate) || 0) - (parseFloat(a.rate) || 0);
       }).slice(0, 5);
-      
       if(sortedData.length === 0) {
         rankList.innerHTML = '<div style="text-align:center; font-size:11px; color:var(--ink3); padding:10px 0;">No records yet</div>';
       } else {
         sortedData.forEach((item, index) => {
-          rankList.innerHTML += `
-            <div class="rank-item">
-              <div class="rank-badge">${index+1}</div>
-              <div class="rank-info">${item.name}</div>
-              <div class="rank-profit">
-                <b>${currentRankMode === 'profit' ? fmt(item.profit) : item.rate + '%'}</b>
-              </div>
-            </div>
-          `;
+          rankList.innerHTML += `<div class="rank-item"><div class="rank-badge">${index+1}</div><div class="rank-info">${item.name}</div><div class="rank-profit"><b>${currentRankMode === 'profit' ? fmt(item.profit) : item.rate + '%'}</b></div></div>`;
         });
       }
     }
-
     data.forEach(item => {
       total += item.profit;
       if(item.profit >= 0) plus++; else minus++;
-      
-      let shouldShow = false;
-      if(currentFilter === 'all') shouldShow = true;
-      else if(currentFilter === 'plus' && item.profit >= 0) shouldShow = true;
-      else if(currentFilter === 'minus' && item.profit < 0) shouldShow = true;
-
+      let shouldShow = (currentFilter === 'all') || (currentFilter === 'plus' && item.profit >= 0) || (currentFilter === 'minus' && item.profit < 0);
       if(shouldShow) {
         const d = document.createElement('div');
         d.className = 'hist-card';
-        d.innerHTML = `<div><b>${item.name}</b><br><small>${fmt(item.sale)}</small></div>
-                       <div style="display:flex;align-items:center;"><b style="color:${item.profit>=0?'var(--green)':'var(--red)'}">${fmt(item.profit)}</b>
-                       <button class="hist-del" onclick="deleteItem(${item.id})">×</button></div>`;
+        d.innerHTML = `<div><b>${item.name}</b><br><small>${fmt(item.sale)}</small></div><div style="display:flex;align-items:center;"><b style="color:${item.profit>=0?'var(--green)':'var(--red)'}">${fmt(item.profit)}</b><button class="hist-del" onclick="deleteItem(${item.id})">×</button></div>`;
         list.appendChild(d);
       }
     });
-
     document.getElementById('monthTotal').textContent = fmt(total);
     document.getElementById('monthTotal').style.color = total >= 0 ? '#fff' : 'var(--red)';
     document.getElementById('plusCount').textContent = plus;
@@ -732,30 +693,19 @@
   }
 
   function resetInputs() {
-    inputs.saleUsd.value = '';
-    inputs.cost.value = '';
-    inputs.shipping.value = '';
-    inputs.itemName.value = '';
-    inputs.other.value = 0;
-    calc();
-    showToast('Form cleared');
+    inputs.saleUsd.value = ''; inputs.cost.value = ''; inputs.shipping.value = ''; inputs.itemName.value = ''; inputs.other.value = 0;
+    calc(); showToast('Form cleared');
   }
 
   function setGoal() {
     const g = prompt("Set your monthly profit goal ($):", "1000");
-    if(g) {
-      localStorage.setItem('cfg_goal_usd', g);
-      updateReport(currentFilter);
-    }
+    if(g) { localStorage.setItem('cfg_goal_usd', g); updateReport(currentFilter); }
   }
 
   function clearAllData() {
     if(confirm("Are you sure you want to delete all saved records? This cannot be undone.")) {
-      localStorage.removeItem('ebay_pro_data_usd');
-      localStorage.removeItem('cfg_goal_usd');
-      localStorage.removeItem('cfg_fee_usd');
-      updateReport('all');
-      showToast('All data cleared');
+      localStorage.removeItem('ebay_pro_data_usd'); localStorage.removeItem('cfg_goal_usd'); localStorage.removeItem('cfg_fee_usd');
+      updateReport('all'); showToast('All data cleared');
     }
   }
 </script>
