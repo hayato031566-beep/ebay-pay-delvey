@@ -113,10 +113,10 @@
     .page { display: none; }
     .page.active { display: block; }
 
-    /* Main App Layout */
+    /* Main App Layout - PC: 2 Columns, Mobile: Vertical (Ranking on Top) */
     .app-grid {
       display: flex;
-      flex-direction: column;
+      flex-direction: column-reverse; /* Ranking on top for mobile */
       gap: 14px;
     }
 
@@ -124,10 +124,13 @@
       .app-grid {
         display: grid;
         grid-template-columns: 1fr 340px;
+        grid-template-areas: "main side";
         align-items: start;
         gap: 20px;
       }
-      .app-side {
+      .app-main { grid-area: main; }
+      .app-side { 
+        grid-area: side;
         position: sticky;
         top: 115px;
       }
@@ -149,33 +152,32 @@
     /* ── Form ── */
     .form-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr; /* Always 2 columns as requested */
+      grid-template-columns: 1fr 1fr; /* Keep 2 columns to align other expenses */
       gap: 13px; padding: 12px 18px 18px;
     }
     .field { display: flex; flex-direction: column; margin-bottom: 0; }
     .field.full { grid-column: 1 / 3; }
 
     label {
-      font-size: 9px; font-weight: 600; letter-spacing: 0.05em;
+      font-size: 9.5px; font-weight: 600; letter-spacing: 0.09em;
       text-transform: uppercase; color: var(--ink3); margin-bottom: 6px;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
     /* ── Inputs ── */
     .iw { display: flex; align-items: stretch; }
     .cb {
       display: flex; align-items: center; justify-content: center;
-      min-width: 32px; padding: 0 8px;
-      font-size: 14px; font-weight: 700;
+      min-width: 36px; padding: 0 10px;
+      font-size: 15px; font-weight: 700;
       border-radius: var(--r-sm) 0 0 var(--r-sm);
       border: 1px solid; border-right: none;
       flex-shrink: 0; letter-spacing: -0.02em;
     }
     .cb.d { background: var(--dollar-bg); border-color: var(--dollar-bd); color: var(--dollar-txt); }
-    .cb.p { background: var(--bg2);         border-color: var(--border);    color: var(--ink3); font-size: 12px; }
+    .cb.p { background: var(--bg2);         border-color: var(--border);    color: var(--ink3); font-size: 13px; }
 
     input {
-      padding: 11px 10px;
+      padding: 11px 12px;
       border: 1px solid #e5e5e5; border-radius: var(--r-sm);
       font-size: 15px; font-family: 'Inter', sans-serif; font-weight: 400;
       color: var(--ink); background: var(--bg); width: 100%;
@@ -186,7 +188,7 @@
       border-radius: 0 var(--r-sm) var(--r-sm) 0;
       border-left: none; flex: 1;
     }
-    input::placeholder { color: var(--ink3); opacity: 0.5; font-size: 12px; }
+    input::placeholder { color: var(--ink3); opacity: 0.5; font-size: 13px; }
     input:focus {
       border-color: var(--main); background: var(--surface);
       box-shadow: 0 0 0 3px rgba(192,89,58,0.10);
@@ -194,19 +196,19 @@
     .iw:focus-within .cb { border-color: var(--main); }
 
     /* ── Quick Buttons ── */
-    .quick-group { display: flex; gap: 5px; margin-top: 8px; }
+    .quick-group { display: flex; gap: 7px; margin-top: 8px; }
     .q-btn {
       flex: 1; background: var(--bg2); border: 1px solid var(--border);
-      padding: 10px 2px; border-radius: var(--r-sm);
-      font-size: 11px; font-weight: 600; color: var(--ink2);
-      cursor: pointer; font-family: 'Inter', sans-serif; line-height: 1.2;
+      padding: 10px 4px; border-radius: var(--r-sm);
+      font-size: 11.5px; font-weight: 600; color: var(--ink2);
+      cursor: pointer; font-family: 'Inter', sans-serif; line-height: 1.3;
       transition: background 0.15s, color 0.15s, border-color 0.15s;
       min-height: 44px; display: flex; flex-direction: column;
       align-items: center; justify-content: center; gap: 2px;
     }
     .q-btn:hover  { background: var(--main-l); border-color: rgba(192,89,58,0.35); color: var(--main-h); }
     .q-btn:active { transform: scale(0.97); }
-    .q-btn small  { font-size: 8px; font-weight: 400; opacity: 0.6; }
+    .q-btn small  { font-size: 9px; font-weight: 400; opacity: 0.6; }
 
     /* ── Back-calc ── */
     .btn-toggle {
@@ -306,10 +308,13 @@
       margin-top: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
     }
 
+    /* ── Close Button Style ── */
+    .btn-close-rank { background: none; border: none; color: var(--ink3); font-size: 18px; cursor: pointer; padding: 0 5px; line-height: 1; }
+
     /* ── Mobile Overrides ── */
     @media (max-width: 600px) {
       .form-grid {
-        grid-template-columns: 1fr 1fr; /* Keep 2 columns as requested */
+        grid-template-columns: 1fr 1fr;
         gap: 8px;
         padding: 10px 12px 15px;
       }
@@ -332,8 +337,8 @@
     }
 
     @media (max-width: 400px) { 
-      #profit { font-size: 38px; } 
-      #monthTotal { font-size: 32px; } 
+      #profit { font-size: 40px; } 
+      #monthTotal { font-size: 34px; } 
     }
   </style>
 </head>
@@ -441,7 +446,10 @@
       <div class="report-hero">
         <h2 style="display:flex; justify-content:space-between; align-items:center;">
           📈 Monthly Progress
-          <button class="q-btn" style="min-height:unset; padding:4px 10px;" onclick="setGoal()">Set Goal</button>
+          <div style="display:flex; gap:5px;">
+            <button class="q-btn" style="min-height:unset; padding:4px 10px;" onclick="toggleRanking(true)" id="showRankBtn" style="display:none;">Ranking</button>
+            <button class="q-btn" style="min-height:unset; padding:4px 10px;" onclick="setGoal()">Set Goal</button>
+          </div>
         </h2>
         <div class="goal-meta">
           <span id="goalText">Goal: $1,000.00</span>
@@ -480,10 +488,11 @@
     </div>
   </div>
 
-  <div class="app-side">
+  <div class="app-side" id="rankingSection">
     <div class="card" style="padding:14px 16px;">
-      <h2 style="padding: 0 0 10px 0; border-bottom: 1px solid var(--border); margin-bottom: 10px;">
-        👑 Top Items
+      <h2 style="padding: 0 0 10px 0; border-bottom: 1px solid var(--border); margin-bottom: 10px; display:flex; justify-content:space-between; align-items:center;">
+        <span>👑 Top Items</span>
+        <button class="btn-close-rank" onclick="toggleRanking(false)">&times;</button>
       </h2>
       <div class="rank-tabs">
         <div class="rank-tab-mini active" id="rt-profit" onclick="setRankMode('profit')">By Profit</div>
@@ -526,8 +535,28 @@
     updateReport(currentFilter);
   }
 
+  function toggleRanking(show) {
+    const section = document.getElementById('rankingSection');
+    const btn = document.getElementById('showRankBtn');
+    section.style.display = show ? 'block' : 'none';
+    if(btn) btn.style.display = show ? 'none' : 'block';
+    
+    // Save preference
+    localStorage.setItem('cfg_show_rank_usd', show);
+
+    // Adjust grid on PC
+    if (window.innerWidth >= 800) {
+      document.querySelector('.app-grid').style.gridTemplateColumns = show ? '1fr 340px' : '1fr';
+    }
+  }
+
   window.onload = () => {
     inputs.feePercent.value = localStorage.getItem('cfg_fee_usd') || 15;
+    
+    // Restore ranking visibility preference
+    const showRank = localStorage.getItem('cfg_show_rank_usd') !== 'false';
+    toggleRanking(showRank);
+
     calc();
     updateReport('all');
   };
