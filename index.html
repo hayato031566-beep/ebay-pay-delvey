@@ -301,10 +301,32 @@
       margin-top: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
     }
 
-    @media (max-width: 400px) { 
-      #profit { font-size: 38px; } 
-      #monthTotal { font-size: 34px; } 
+    /* ── Mobile View Adjustment ── */
+    @media (max-width: 600px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      .field.full {
+        grid-column: span 1;
+      }
+      .copy-god-row {
+        flex-wrap: wrap;
+      }
+      .copy-god-row button {
+        flex: 1 1 calc(50% - 8px);
+      }
+      .back-calc-row {
+        flex-direction: column;
+      }
+      .back-calc-row button {
+        width: 100%;
+      }
+      .quick-group {
+        flex-wrap: wrap;
+      }
     }
+
+    @media (max-width: 400px) { #profit { font-size: 38px; } #monthTotal{ font-size: 36px; } }
   </style>
 </head>
 <body>
@@ -356,16 +378,16 @@
             <div class="iw"><div class="cb d">$</div><input type="number" id="cost" placeholder="0.00"></div>
           </div>
           <div class="field">
+            <label>Other Expenses ($)</label>
+            <div class="iw"><div class="cb d">$</div><input type="number" id="other" value="0"></div>
+          </div>
+          <div class="field full">
             <label>Shipping ($)</label>
             <div class="iw"><div class="cb d">$</div><input type="number" id="shipping" placeholder="0.00"></div>
             <div class="quick-group">
-              <button class="q-btn" onclick="setShipping(5)">📦 Std<small>~$5</small></button>
-              <button class="q-btn" onclick="setShipping(15)">✈️ Pri<small>~$15</small></button>
+              <button class="q-btn" onclick="setShipping(5)">📦 Standard<small>~$5</small></button>
+              <button class="q-btn" onclick="setShipping(15)">✈️ Priority<small>~$15</small></button>
             </div>
-          </div>
-          <div class="field">
-            <label>Other Expenses ($)</label>
-            <div class="iw"><div class="cb d">$</div><input type="number" id="other" value="0"></div>
           </div>
         </div>
       </div>
@@ -550,8 +572,6 @@
     if (pId === 'calcPage') {
       rankingSide.style.display = 'block';
     } else {
-      rankingSide.style.display = (window.innerWidth >= 800) ? 'none' : 'none';
-      // In Reports tab, hide side ranking on all screens as requested
       rankingSide.style.display = 'none';
     }
     
