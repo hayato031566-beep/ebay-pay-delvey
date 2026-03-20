@@ -112,24 +112,30 @@
     .page.active { display: block; }
 
     /* Main App Layout */
-    .app-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
+   .app-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
 
-    @media (min-width: 800px) {
-      .app-grid {
-        display: grid;
-        grid-template-columns: 1fr 320px;
-        align-items: start;
-        gap: 20px;
-      }
-      .app-side {
-        position: sticky;
-        top: 115px;
-      }
-    }
+@media (min-width: 800px) {
+  .app-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    align-items: start;
+    gap: 20px;
+  }
+
+  .app-main {
+    min-width: 0;
+  }
+
+  .app-side {
+    position: sticky;
+    top: 115px;
+    width: 100%;
+  }
+}
 
     /* ── Card ── */
     .card {
