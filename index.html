@@ -322,11 +322,13 @@
         width: 100%;
       }
       .quick-group {
-        flex-wrap: wrap;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
       }
     }
 
-    @media (max-width: 400px) { #profit { font-size: 38px; } #monthTotal{ font-size: 36px; } }
+    @media (max-width: 360px) { #profit { font-size: 38px; } #monthTotal{ font-size: 36px; } }
   </style>
 </head>
 <body>
