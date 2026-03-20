@@ -92,7 +92,7 @@
       text-align: center;
       position: relative;
       z-index: 10;
-      width: 100%; margin: 10px auto 14px;
+      max-width: 872px; margin: 20px auto 14px;
       box-shadow: 0 8px 30px rgba(0,0,0,0.2);
       overflow: hidden;
     }
@@ -106,24 +106,24 @@
     /* ── Layout ── */
     .container { 
       width: 100%; 
-      max-width: 1000px; 
+      max-width: 1100px; 
       margin: 0 auto; 
       padding: 115px 14px 60px;
     }
     .page { display: none; }
     .page.active { display: block; }
 
-    /* Main App Grid Layout */
+    /* Main App Layout */
     .app-grid {
       display: flex;
       flex-direction: column;
       gap: 14px;
     }
 
-    @media (min-width: 801px) {
+    @media (min-width: 800px) {
       .app-grid {
         display: grid;
-        grid-template-columns: 1fr 320px;
+        grid-template-columns: 1fr 340px;
         align-items: start;
         gap: 20px;
       }
@@ -148,32 +148,34 @@
 
     /* ── Form ── */
     .form-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
+      display: grid;
+      grid-template-columns: 1fr 1fr; /* Always 2 columns as requested */
       gap: 13px; padding: 12px 18px 18px;
     }
     .field { display: flex; flex-direction: column; margin-bottom: 0; }
     .field.full { grid-column: 1 / 3; }
 
     label {
-      font-size: 9.5px; font-weight: 600; letter-spacing: 0.09em;
+      font-size: 9px; font-weight: 600; letter-spacing: 0.05em;
       text-transform: uppercase; color: var(--ink3); margin-bottom: 6px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
     /* ── Inputs ── */
     .iw { display: flex; align-items: stretch; }
     .cb {
       display: flex; align-items: center; justify-content: center;
-      min-width: 36px; padding: 0 10px;
-      font-size: 15px; font-weight: 700;
+      min-width: 32px; padding: 0 8px;
+      font-size: 14px; font-weight: 700;
       border-radius: var(--r-sm) 0 0 var(--r-sm);
       border: 1px solid; border-right: none;
       flex-shrink: 0; letter-spacing: -0.02em;
     }
     .cb.d { background: var(--dollar-bg); border-color: var(--dollar-bd); color: var(--dollar-txt); }
-    .cb.p { background: var(--bg2);         border-color: var(--border);    color: var(--ink3); font-size: 13px; }
+    .cb.p { background: var(--bg2);         border-color: var(--border);    color: var(--ink3); font-size: 12px; }
 
     input {
-      padding: 11px 12px;
+      padding: 11px 10px;
       border: 1px solid #e5e5e5; border-radius: var(--r-sm);
       font-size: 15px; font-family: 'Inter', sans-serif; font-weight: 400;
       color: var(--ink); background: var(--bg); width: 100%;
@@ -184,7 +186,7 @@
       border-radius: 0 var(--r-sm) var(--r-sm) 0;
       border-left: none; flex: 1;
     }
-    input::placeholder { color: var(--ink3); opacity: 0.5; font-size: 13px; }
+    input::placeholder { color: var(--ink3); opacity: 0.5; font-size: 12px; }
     input:focus {
       border-color: var(--main); background: var(--surface);
       box-shadow: 0 0 0 3px rgba(192,89,58,0.10);
@@ -192,19 +194,19 @@
     .iw:focus-within .cb { border-color: var(--main); }
 
     /* ── Quick Buttons ── */
-    .quick-group { display: flex; gap: 7px; margin-top: 8px; }
+    .quick-group { display: flex; gap: 5px; margin-top: 8px; }
     .q-btn {
       flex: 1; background: var(--bg2); border: 1px solid var(--border);
-      padding: 10px 4px; border-radius: var(--r-sm);
-      font-size: 11.5px; font-weight: 600; color: var(--ink2);
-      cursor: pointer; font-family: 'Inter', sans-serif; line-height: 1.3;
+      padding: 10px 2px; border-radius: var(--r-sm);
+      font-size: 11px; font-weight: 600; color: var(--ink2);
+      cursor: pointer; font-family: 'Inter', sans-serif; line-height: 1.2;
       transition: background 0.15s, color 0.15s, border-color 0.15s;
       min-height: 44px; display: flex; flex-direction: column;
       align-items: center; justify-content: center; gap: 2px;
     }
     .q-btn:hover  { background: var(--main-l); border-color: rgba(192,89,58,0.35); color: var(--main-h); }
     .q-btn:active { transform: scale(0.97); }
-    .q-btn small  { font-size: 9px; font-weight: 400; opacity: 0.6; }
+    .q-btn small  { font-size: 8px; font-weight: 400; opacity: 0.6; }
 
     /* ── Back-calc ── */
     .btn-toggle {
@@ -307,11 +309,12 @@
     /* ── Mobile Overrides ── */
     @media (max-width: 600px) {
       .form-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
+        grid-template-columns: 1fr 1fr; /* Keep 2 columns as requested */
+        gap: 8px;
+        padding: 10px 12px 15px;
       }
       .field.full {
-        grid-column: 1 / 2;
+        grid-column: 1 / 3;
       }
       .copy-god-row {
         flex-wrap: wrap;
@@ -329,8 +332,8 @@
     }
 
     @media (max-width: 400px) { 
-      #profit { font-size: 40px; } 
-      #monthTotal { font-size: 34px; } 
+      #profit { font-size: 38px; } 
+      #monthTotal { font-size: 32px; } 
     }
   </style>
 </head>
