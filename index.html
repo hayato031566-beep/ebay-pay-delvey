@@ -118,14 +118,6 @@
       gap: 14px;
     }
 
-    @media (min-width: 800px) {
-      .report-layout {
-        display: block;
-        max-width: 700px;
-        margin: 0 auto;
-      }
-    }
-
     /* ── Card ── */
     .card {
       background: var(--surface); border-radius: var(--r-lg);
@@ -163,7 +155,7 @@
       flex-shrink: 0; letter-spacing: -0.02em;
     }
     .cb.d { background: var(--dollar-bg); border-color: var(--dollar-bd); color: var(--dollar-txt); }
-    .cb.p { background: var(--bg2);         border-color: var(--border);    color: var(--ink3); font-size: 13px; }
+    .cb.p { background: var(--bg2);          border-color: var(--border);    color: var(--ink3); font-size: 13px; }
 
     input {
       padding: 11px 12px;
@@ -264,7 +256,7 @@
     }
 
     /* Report & Toast */
-    .report-hero { background: var(--ink); color: #fff; border-radius: var(--r-lg); padding: 24px 20px; margin-bottom: 10px; position: relative; overflow: hidden; }
+    .report-hero { background: var(--ink); color: #fff; border-radius: var(--r-lg); padding: 30px 20px; margin-bottom: 10px; position: relative; overflow: hidden; }
     #monthTotal { font-size: 44px; font-weight: 300; letter-spacing: -0.04em; color: #fff; text-align: center; cursor: pointer; margin: 4px 0; }
     
     .sum-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0 0; }
@@ -442,6 +434,7 @@
 </div>
 
 <script>
+  // localStorage keys for USD version
   const STORE_KEYS = {
     data: 'ebay_pro_data_usd',
     fee: 'cfg_fee_usd'
@@ -453,6 +446,7 @@
 
   let currentFilter = 'all'; 
 
+  // --- Utility Functions ---
   const fmt = (val) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -474,7 +468,6 @@
     document.getElementById(pId).classList.add('active');
     document.getElementById(pId === 'calcPage' ? 'tab-calc' : 'tab-report').classList.add('active');
     window.scrollTo(0,0);
-    if(pId === 'reportPage') updateReport(currentFilter);
   }
 
   function calc() {
@@ -547,6 +540,7 @@
     data.unshift(rec);
     localStorage.setItem(STORE_KEYS.data, JSON.stringify(data));
     showToast('Record saved!');
+    updateReport(currentFilter); 
   }
 
   function updateReport(filter = currentFilter) {
@@ -604,13 +598,6 @@
       showToast('All data cleared');
     }
   }
-
-  // Initial calculation and fee restoration
-  window.onload = () => {
-    const savedFee = localStorage.getItem(STORE_KEYS.fee);
-    if(savedFee) inputs.feePercent.value = savedFee;
-    calc();
-  };
 </script>
 </body>
 </html>
