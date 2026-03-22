@@ -176,21 +176,6 @@
     }
     .iw:focus-within .cb { border-color: var(--main); }
 
-    /* ── Quick Buttons ── */
-    .quick-group { display: flex; gap: 7px; margin-top: 8px; }
-    .q-btn {
-      flex: 1; background: var(--bg2); border: 1px solid var(--border);
-      padding: 10px 4px; border-radius: var(--r-sm);
-      font-size: 11.5px; font-weight: 600; color: var(--ink2);
-      cursor: pointer; font-family: 'Inter', sans-serif; line-height: 1.3;
-      transition: background 0.15s, color 0.15s, border-color 0.15s;
-      min-height: 44px; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 2px;
-    }
-    .q-btn:hover  { background: var(--main-l); border-color: rgba(192,89,58,0.35); color: var(--main-h); }
-    .q-btn:active { transform: scale(0.97); }
-    .q-btn small  { font-size: 9px; font-weight: 400; opacity: 0.6; }
-
     /* ── Back-calc ── */
     .btn-toggle {
       display: flex; align-items: center; justify-content: center; gap: 6px;
@@ -256,8 +241,8 @@
     }
 
     /* Report & Toast */
-    .report-hero { background: var(--ink); color: #fff; border-radius: var(--r-lg); padding: 30px 20px; margin-bottom: 10px; position: relative; overflow: hidden; }
-    #monthTotal { font-size: 44px; font-weight: 300; letter-spacing: -0.04em; color: #fff; text-align: center; cursor: pointer; margin: 4px 0; }
+    .report-hero { background: var(--ink); color: #fff; border-radius: var(--r-lg); padding: 30px 20px; text-align: center; margin-bottom: 10px; position: relative; overflow: hidden; }
+    #monthTotal { font-size: 44px; font-weight: 300; letter-spacing: -0.04em; color: #fff; margin: 4px 0; }
     
     .sum-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0 0; }
     .sum-item { background: var(--surface); padding: 14px 12px; border-radius: var(--r); text-align: center; cursor: pointer; border: 1.5px solid var(--border); }
@@ -399,11 +384,8 @@
       <div class="report-layout">
         <div class="report-main">
           <div class="report-hero">
-            <h2 style="display:flex; justify-content:center; align-items:center;">
-              📊 Total Net Profit
-            </h2>
+            <div style="font-size:10px; text-transform:uppercase; letter-spacing:0.1em; opacity:0.6; margin-bottom:5px;">Total Net Profit</div>
             <div id="monthTotal" onclick="updateReport('all')">$0.00</div>
-            <div style="font-size:9px; text-align:center; color:rgba(255,255,255,0.25);">Tap amount to show all records</div>
           </div>
           
           <div class="card" style="padding:14px 16px;">
