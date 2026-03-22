@@ -390,10 +390,6 @@
           <div class="field full">
             <label>Shipping ($)</label>
             <div class="iw"><div class="cb d">$</div><input type="number" id="shipping" placeholder="0.00"></div>
-            <div class="quick-group">
-              <button class="q-btn" onclick="setShipping(5)">📦 Standard<small>~$5</small></button>
-              <button class="q-btn" onclick="setShipping(15)">✈️ Priority<small>~$15</small></button>
-            </div>
           </div>
         </div>
       </div>
@@ -441,7 +437,6 @@
           <div class="report-hero">
             <h2 style="display:flex; justify-content:space-between; align-items:center;">
               📈 Monthly Progress
-              <button class="q-btn" style="min-height:unset; padding:4px 10px;" onclick="setGoal()">Set Goal</button>
             </h2>
             <div class="goal-meta">
               <span id="goalText">Goal: $1,000.00</span>
@@ -450,11 +445,6 @@
             <div class="bar-bg"><div id="goalBar" class="bar-fill"></div></div>
             <div id="monthTotal" onclick="updateReport('all')">$0.00</div>
             <div style="font-size:9px; text-align:center; color:rgba(255,255,255,0.25); margin-top:-8px;">Tap amount to show all records</div>
-
-            <button class="btn-share-x" onclick="shareOnX()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-              Share on X
-            </button>
           </div>
           
           <div class="card" style="padding:14px 16px;">
